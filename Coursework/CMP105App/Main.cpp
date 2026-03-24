@@ -13,6 +13,7 @@
 #include "Framework/GameState.h"
 #include "LevelWithTiles.h"
 #include "LevelTwoWithTiles.h"
+#include "TextureManager.h"
 
 #ifndef SFML_VERSION_MAJOR
 	#error "SFML 3 is required for this framework."
@@ -86,6 +87,10 @@ int main()
 	AudioManager audioManager;
 	Input input;
 	GameState gameState;
+	TextureManager textures;
+
+	//Load textures
+	textures.loadTexture("player", "gfx/dino1.png");
 
 
 	// Create level objects that may reference manager objects

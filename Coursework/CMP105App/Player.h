@@ -3,13 +3,14 @@
 #include "Framework/Animation.h"
 #include <iostream>
 #include "Framework/AudioManager.h"
+#include "TextureManager.h"
 
 
 class Player :
     public GameObject
 {
 public:
-    Player();
+    Player(TextureManager& textures);
 
     void handleInput(float dt) override;
     void update(float dt) override;
@@ -27,7 +28,7 @@ public:
     void setAudio(AudioManager* audio) { m_audio = audio; };
 
 private:
-    sf::Texture m_dinoTexture;
+    TextureManager& m_textures;
     Animation* m_currAnim;
     Animation m_idle;
     Animation m_walk;

@@ -8,7 +8,7 @@ TextureManager::~TextureManager() {
 
 }
 
-void TextureManager::loadTexture(std::string& name, std::string& filename) {
+void TextureManager::loadTexture(const std::string& name, const std::string& filename) {
 
 
 	if (m_textures.find(name) != m_textures.end()) {
@@ -26,7 +26,7 @@ void TextureManager::loadTexture(std::string& name, std::string& filename) {
 }
 
 
-sf::Texture TextureManager::getTexture(std::string& name) {
+sf::Texture TextureManager::getTexture(const std::string& name) {
 	auto it = m_textures.find(name);
 
 	if (it == m_textures.end()) {

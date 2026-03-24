@@ -1,11 +1,9 @@
 #include "Player.h"
 
-Player::Player()
+Player::Player(TextureManager& textures) : m_textures(textures)
 {
-	if (!m_dinoTexture.loadFromFile("gfx/dino1.png"))
-		std::cerr << "No dino texture. sad";
 
-	setTexture(&m_dinoTexture);
+	setTexture(&m_textures.getTexture("player"));
 	// Dino is 24x24, tiles are 18x18
 	// LCM(18,24) = 72.
 	setSize({ 72,72 });		

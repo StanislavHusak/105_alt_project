@@ -11,9 +11,9 @@ public:
 	TextureManager();
 	~TextureManager();
 
-	void loadTexture(std::string& name, std::string& filename);
+	void loadTexture(const std::string& name, const std::string& filename);
 
-	sf::Texture getTexture(std::string& name);
+	sf::Texture getTexture(const std::string& name);
 
 private:
 	std::map<std::string, sf::Texture> m_textures;
