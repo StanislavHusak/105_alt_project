@@ -19,14 +19,16 @@ public:
 	void onBegin() override;
 	void onEnd() override;
 	void MapSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_cols, int num_row, int sheet_spacing, std::string Texture);
+	void BackGroundSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_cols, int num_row, int sheet_spacing, std::string Texture);
 
 private:
     void updateCameraAndBackground();
 
     TileMap m_tilemap;
     TileMap m_bgtilemap;
-    Player m_player;
     sf::Texture m_tileTexture;
+
+    Player m_player;
     Lever m_lever;
     sf::Text m_alertText;
     sf::Font m_font;
