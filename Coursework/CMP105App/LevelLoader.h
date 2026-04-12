@@ -9,17 +9,17 @@
 #include <algorithm>
 #include <fstream>
 
-class LevelLoader : public Scene
+class LevelLoader
 {
 public:
-	LevelLoader(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio);
-	void handleInput(float dt) override;
-	void update(float dt) override;
-	void render() override;
-	void onBegin() override;
-	void onEnd() override;
+	LevelLoader();
+	
+	void draw(sf::RenderWindow& window);
+
 	void MapSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_cols, int num_row, int sheet_spacing, std::string Texture);
-	void BackGroundSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_cols, int num_row, int sheet_spacing, std::string Texture);
+    TileMap& getTileMap() { return m_tilemap; };
+    void BackGroundSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_cols, int num_row, int sheet_spacing, std::string Texture);
+    TileMap& getBgTileMap() { return m_bgtilemap; };
 
 private:
     void updateCameraAndBackground();
@@ -30,8 +30,8 @@ private:
 
     Player m_player;
     Lever m_lever;
-    sf::Text m_alertText;
-    sf::Font m_font;
+    /*sf::Text m_alertText;
+    sf::Font m_font;*/
     std::vector<Flag*> m_flags;
     bool m_flagLeverPulled = false;
     float m_promptTimer;

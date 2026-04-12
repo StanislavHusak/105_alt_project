@@ -6,61 +6,65 @@ LevelWithTiles::LevelWithTiles(sf::RenderWindow& window, Input& input, GameState
 	GameObject tile;
 	std::vector<GameObject> tileSet;
 
-	int num_columns = 20;
-	int num_rows = 9;
-	int tile_size = 18;      // Visual size of the tile
+	//int num_columns = 20;
+	//int num_rows = 9;
+	//int tile_size = 18;      // Visual size of the tile
 	int sheet_spacing = 1;   // Gap between tiles
 
 
-	// Set GameObject size (Scaling up 4x for visibility)
-	// 4 * 18 = 3 * 24 = 72 (dino size is 24).
-	tile.setSize(sf::Vector2f(tile_size * 4, tile_size * 4));
-	tile.setCollisionBox({ { 0,0 }, tile.getSize() });
+	//// Set GameObject size (Scaling up 4x for visibility)
+	//// 4 * 18 = 3 * 24 = 72 (dino size is 24).
+	//tile.setSize(sf::Vector2f(tile_size * 4, tile_size * 4));
+	//tile.setCollisionBox({ { 0,0 }, tile.getSize() });
 
-	for (int i = 0; i < num_columns * num_rows; i++)
-	{
-		int row = i / num_columns;
-		int col = i % num_columns;
+	//for (int i = 0; i < num_columns * num_rows; i++)
+	//{
+	//	int row = i / num_columns;
+	//	int col = i % num_columns;
 
-		tile.setTextureRect({
-			{(tile_size + sheet_spacing) * col, (tile_size + sheet_spacing) * row},
-			{tile_size, tile_size} });
-		if (col <= 4 || col >= 12) tile.setCollider(true);
-		else tile.setCollider(false);
-		tileSet.push_back(tile);
-	}
+	//	tile.setTextureRect({
+	//		{(tile_size + sheet_spacing) * col, (tile_size + sheet_spacing) * row},
+	//		{tile_size, tile_size} });
+	//	if (col <= 4 || col >= 12) tile.setCollider(true);
+	//	else tile.setCollider(false);
+	//	tileSet.push_back(tile);
+	//}
 
-	// Add Blank
-	tile.setTextureRect({ {0, 0}, {-24, -24} }); // Empty rect for blank
-	int b = tileSet.size();
-	tile.setCollider(false);
-	tileSet.push_back(tile);
+	//// Add Blank
+	//tile.setTextureRect({ {0, 0}, {-24, -24} }); // Empty rect for blank
+	//int b = tileSet.size();
+	//tile.setCollider(false);
+	//tileSet.push_back(tile);
 
 	sf::Vector2u mapDimensions{ 40, 8 };
 	std::vector<int> tileMap = {
-		b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b, b, b, b  , b  , b  , b  , b  , b  , b, b, b, b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  ,
-		b  , 131, b  , b  , b  , 131, b  , b  , b  , 131,  21,  22,  23, b, b, b,  21,  22,  22,  22,  22,  23, b, b, b,  21,  22,  22,  23, b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  ,
-		b  , 131, b  , b  , b  , 131, b  , 21 ,  22, 22 , 121, 122, 123, b, b, b, 121, 122, 122, 122, 122, 123, b, b, b, 121, 122, 122, 123, 22 , 22 , 23 , b  , b  , b  , b  , b  , b  , b  , b  ,
-		b  , 131, b  , b  , 21 ,  22, 22 , 121, 122, 122, 121, 122, 123, b, b, b, 121, 122, 122, 122, 122, 123, b, b, b, 121, 122, 122, 123, 122, 122, 123, 22 , 22 , 22 , 22 , 22 , 22 , 22 , 23 ,
-		21 ,  22, 22 , 22 , 121, 122, 122, 121, 122, 122, 121, 122, 123, b, b, b, 121, 122, 122, 122, 122, 123, b, b, b, 121, 122, 122, 123, 122, 122, 123, 122, 122, 122, 122, 122, 122, 122, 123,
-		121, 122, 122, 122, 121, 122, 122, 121, 122, 122, 121, 122, 123, b, b, b, 121, 122, 122, 122, 122, 123, b, b, b, 121, 122, 122, 123, 122, 122, 123, 122, 122, 122, 122, 122, 122, 122, 123,
-		121, 122, 122, 122, 121, 122, 122, 121, 122, 122, 121, 122, 123, b, b, b, 121, 122, 122, 122, 122, 123, b, b, b, 121, 122, 122, 123, 122, 122, 123, 122, 122, 122, 122, 122, 122, 122, 123,
-		141, 142, 142, 142, 141, 142, 142, 141, 142, 142, 141, 142, 143, b, b, b, 141, 142, 142, 142, 142, 143, b, b, b, 141, 142, 142, 143, 142, 142, 143, 142, 142, 142, 142, 142, 142, 142, 143
+	//	b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b, b, b, b  , b  , b  , b  , b  , b  , b, b, b, b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  ,
+	//	b  , 131, b  , b  , b  , 131, b  , b  , b  , 131,  21,  22,  23, b, b, b,  21,  22,  22,  22,  22,  23, b, b, b,  21,  22,  22,  23, b  , b  , b  , b  , b  , b  , b  , b  , b  , b  , b  ,
+	//	b  , 131, b  , b  , b  , 131, b  , 21 ,  22, 22 , 121, 122, 123, b, b, b, 121, 122, 122, 122, 122, 123, b, b, b, 121, 122, 122, 123, 22 , 22 , 23 , b  , b  , b  , b  , b  , b  , b  , b  ,
+	//	b  , 131, b  , b  , 21 ,  22, 22 , 121, 122, 122, 121, 122, 123, b, b, b, 121, 122, 122, 122, 122, 123, b, b, b, 121, 122, 122, 123, 122, 122, 123, 22 , 22 , 22 , 22 , 22 , 22 , 22 , 23 ,
+	//	21 ,  22, 22 , 22 , 121, 122, 122, 121, 122, 122, 121, 122, 123, b, b, b, 121, 122, 122, 122, 122, 123, b, b, b, 121, 122, 122, 123, 122, 122, 123, 122, 122, 122, 122, 122, 122, 122, 123,
+	//	121, 122, 122, 122, 121, 122, 122, 121, 122, 122, 121, 122, 123, b, b, b, 121, 122, 122, 122, 122, 123, b, b, b, 121, 122, 122, 123, 122, 122, 123, 122, 122, 122, 122, 122, 122, 122, 123,
+	//	121, 122, 122, 122, 121, 122, 122, 121, 122, 122, 121, 122, 123, b, b, b, 121, 122, 122, 122, 122, 123, b, b, b, 121, 122, 122, 123, 122, 122, 123, 122, 122, 122, 122, 122, 122, 122, 123,
+	//	141, 142, 142, 142, 141, 142, 142, 141, 142, 142, 141, 142, 143, b, b, b, 141, 142, 142, 142, 142, 143, b, b, b, 141, 142, 142, 143, 142, 142, 143, 142, 142, 142, 142, 142, 142, 142, 143
 	};
+	//
+
+	//m_tilemap.loadTexture("gfx/tilemap.png");
+	//m_tilemap.setTileSet(tileSet);
+	//m_tilemap.setTileMap(tileMap, mapDimensions);
+	//m_tilemap.setPosition({ 0, 100 });
+	//m_tilemap.buildLevel();
+
+	//tileSet.clear();
+
+	m_levelLoader.MapSetup("data/Tilemap.txt", {40, 8}, 18, 20, 9, 1, "gfx/tilemap.png");
 	
 
-	m_tilemap.loadTexture("gfx/tilemap.png");
-	m_tilemap.setTileSet(tileSet);
-	m_tilemap.setTileMap(tileMap, mapDimensions);
-	m_tilemap.setPosition({ 0, 100 });
-	m_tilemap.buildLevel();
-
-	tileSet.clear();
 
 	// setup background
-	tile_size = 24;
-	num_columns = 8;
-	num_rows = 3;
+	int tile_size = 24;
+	int num_columns = 8;
+	int num_rows = 3;
 	// 24 * 9 = 216, a multiple of 72, the LCM of the player and tile size.
 	tile.setSize(sf::Vector2f(tile_size * 9, tile_size * 9));
 
@@ -140,7 +144,7 @@ void LevelWithTiles::update(float dt)
 	m_player.update(dt);
 
 
-	std::vector<GameObject>& level = *m_tilemap.getLevel();
+	std::vector<GameObject>& level = *m_levelLoader.getTileMap().getLevel();
 	for (auto& t : level)
 	{
 		if (t.isCollider() && Collision::checkBoundingBox(m_player, t))
@@ -233,7 +237,7 @@ void LevelWithTiles::render()
 {
 	beginDraw();
 	m_bgtilemap.render(m_window);
-	m_tilemap.render(m_window);
+	m_levelLoader.draw(m_window);
 	m_window.draw(m_lever);
 	for (auto& flag : m_flags) m_window.draw(*flag);
 	m_window.draw(m_player);

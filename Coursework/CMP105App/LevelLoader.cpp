@@ -1,6 +1,6 @@
 #include "LevelLoader.h"
 
-LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio) : Scene(window, input, gameState, audio), m_alertText(m_font) {
+LevelLoader::LevelLoader() {
 	
 
 }
@@ -34,14 +34,21 @@ void LevelLoader::MapSetup(std::string tileMapData, sf::Vector2u mapDimensions, 
 	tileSet.push_back(tile);
 
 	//Get tileMap//
-	int a;
+	std::string a;
 	std::vector<int> tileMap;
 	std::ifstream data(tileMapData);
 	if (!data.is_open()) std::cerr << "Failed to open data \n";
 	int i = 0;
 	while (data >> a) {
-		tileMap.push_back(a);
-	}
+		if (a == "b") {
+			tileMap.push_back(b);
+		}
+		else {
+			int c = stoi(a);
+			tileMap.push_back(c);
+		}
+
+	};
 	data.close();
 	//__________//
 
@@ -84,13 +91,20 @@ void LevelLoader::BackGroundSetup(std::string tileMapData, sf::Vector2u mapDimen
 	tileSet.push_back(tile);
 
 	//Get tileMap//
-	int a;
+	std::string a;
 	std::vector<int> tileMap;
 	std::ifstream data(tileMapData);
 	if (!data.is_open()) std::cerr << "Failed to open data \n";
 	int i = 0;
 	while (data >> a) {
-		tileMap.push_back(a);
+		if (a == "b") {
+			tileMap.push_back(b);
+		}
+		else {
+			int c = stoi(a);
+			tileMap.push_back(c);
+		}
+		
 	}
 	data.close();
 	//__________//
@@ -103,3 +117,9 @@ void LevelLoader::BackGroundSetup(std::string tileMapData, sf::Vector2u mapDimen
 
 	tileSet.clear();
 }
+
+void LevelLoader::draw(sf::RenderWindow& window) {
+	m_tilemap.render(window);
+}
+
+

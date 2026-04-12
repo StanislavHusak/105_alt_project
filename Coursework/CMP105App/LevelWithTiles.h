@@ -6,6 +6,7 @@
 #include "Lever.h"
 #include "Flag.h"
 #include <algorithm>
+#include "LevelLoader.h"
 
 class LevelWithTiles :
     public Scene
@@ -32,6 +33,8 @@ private:
     std::vector<Flag*> m_flags;
     bool m_flagLeverPulled = false;
     float m_promptTimer;
+
+    LevelLoader m_levelLoader;
 
     const float PROMPT_TIME = 2.f;
     const sf::Vector2i WORLD_SIZE = { 2880, 648 };
