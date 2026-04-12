@@ -120,6 +120,7 @@ void LevelLoader::BackGroundSetup(std::string tileMapData, sf::Vector2u mapDimen
 
 void LevelLoader::draw(sf::RenderWindow& window) {
 	m_tilemap.render(window);
+	m_bgtilemap.render(window);
 }
 
 
