@@ -121,7 +121,7 @@ int main()
 		if (deltaTime > 0.1f) deltaTime = 0.1f; // Clamp delta time to avoid large jumps
 
 		State requestedState = gameState.getCurrentState();
-		if (sceneRegistry[requestedState] != currentScene)
+		if (requestedState != State::PAUSE && sceneRegistry[requestedState] != currentScene)
 		{
 			currentScene->onEnd();
 			currentScene = sceneRegistry[requestedState];
@@ -129,7 +129,9 @@ int main()
 		}
 		// run the core loop for the current scene
 		currentScene->handleInput(deltaTime);
-		currentScene->update(deltaTime);
+		if (gameState.getCurrentState() != State::PAUSE) {
+			currentScene->update(deltaTime);
+		}
 		currentScene->render();
 
 		// Update input class, handle pressed keys

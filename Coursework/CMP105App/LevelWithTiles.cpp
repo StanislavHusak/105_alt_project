@@ -3,10 +3,6 @@
 LevelWithTiles::LevelWithTiles(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio)
 	: Scene(window, input, gameState, audio), m_alertText(m_font)
 {
-	//Setup tilemap and background
-	m_levelLoader.MapSetup("data/Tilemap.txt", {40, 8}, 18, 20, 9, 1, "gfx/tilemap.png");
-	m_levelLoader.BackGroundSetup("data/BgTilemap.txt", { 14, 3 }, 24, 8, 3, 1, "gfx/tilemap-backgrounds.png");
-
 
 	// setup player 
 	m_player.setInput(&m_input);
@@ -46,7 +42,8 @@ void LevelWithTiles::handleInput(float dt)
 	m_player.handleInput(dt);
 
 	if (m_input.isPressed(sf::Keyboard::Scancode::Escape))
-		m_gameState.setCurrentState(State::MENU);
+		m_gameState.setCurrentState(State::PAUSE);
+	m_levelLoader.PausebuttonsInput(m_input, m_gameState);
 }
 
 void LevelWithTiles::update(float dt)
@@ -153,7 +150,7 @@ void LevelWithTiles::render()
 {
 	beginDraw();
 	//Draw tilemap and background
-	m_levelLoader.draw(m_window);
+	m_levelLoader.draw(m_window, m_gameState.getCurrentState());
 
 	m_window.draw(m_lever);
 	for (auto& flag : m_flags) m_window.draw(*flag);
