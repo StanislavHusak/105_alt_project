@@ -18,6 +18,13 @@ LevelLoader::LevelLoader() : m_resumeButtonLabel(m_font), m_menuButtonLabel(m_fo
 
 	//Setup pause panel
 	UI_Object(m_PausePanel, { 500, 300 }, { 50, 200 }, sf::Color::Yellow);
+
+	//Setup UI Lives
+	for (int i = 0; i < 3; i++) {
+		GameObject live;
+		UI_Object(live, { 50, 50 }, { 50.f*i, 50 }, sf::Color::Red);
+		m_lives.push_back(live);
+	}
 }
 
 void LevelLoader::TileMapSetup(TileMap& tilemap, std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int scaling, int num_columns, int num_rows, int sheet_spacing, std::string Texture) {
@@ -92,20 +99,6 @@ void LevelLoader::UI_Text(sf::Text& textObj, int characterSize, sf::Vector2f pos
 }
 
 
-void LevelLoader::draw(sf::RenderWindow& window, State state) {
-	m_tilemap.render(window);
-	m_bgtilemap.render(window); 
-
-	if (state == State::PAUSE) {
-		window.draw(m_PausePanel);
-		window.draw(m_resumeButton);
-		window.draw(m_resumeButtonLabel);
-		window.draw(m_menuButton);
-		window.draw(m_menuButtonLabel);
-	}
-}
-
-
 void LevelLoader::PausebuttonsInput(Input& input, GameState& gameState){
 	if (gameState.getCurrentState() != State::PAUSE) return;
 
@@ -128,4 +121,36 @@ void LevelLoader::PausebuttonsInput(Input& input, GameState& gameState){
 		m_menuButton.setFillColor(sf::Color::Red);
 	}
 	else { m_menuButton.setFillColor(m_defaultButtonColour); }
+}
+
+void LevelLoader::updateUI(Player& player) {
+	
+}
+
+
+void LevelLoader::draw(sf::RenderWindow& window, State state) {
+	m_tilemap.render(window);
+	m_bgtilemap.render(window);
+
+	if (state == State::PAUSE) {
+		window.draw(m_PausePanel);
+		window.draw(m_resumeButton);
+		window.draw(m_resumeButtonLabel);
+		window.draw(m_menuButton);
+		window.draw(m_menuButtonLabel);
+	}
+}
+void LevelLoader::drawUI(sf::RenderWindow& window, State state) {
+
+	for (int i = 0;i < 3; i++) {
+		window.draw(m_lives[i]);
+	}
+
+	if (state == State::PAUSE) {
+		window.draw(m_PausePanel);
+		window.draw(m_resumeButton);
+		window.draw(m_resumeButtonLabel);
+		window.draw(m_menuButton);
+		window.draw(m_menuButtonLabel);
+	}
 }

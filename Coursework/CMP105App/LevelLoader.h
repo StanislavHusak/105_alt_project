@@ -15,8 +15,10 @@ public:
 	LevelLoader();
 
     void draw(sf::RenderWindow& window, State state);
+    void drawUI(sf::RenderWindow& window, State state);
+    void updateUI(Player& player);
     void PausebuttonsInput(Input& input, GameState& gameState);
-
+    void SetUpLivesInScene();
 
     
     void TileMapSetup(TileMap& tilemap, std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int scaling, int num_columns, int num_rows, int sheet_spacing, std::string Texture);
@@ -35,6 +37,8 @@ private:
     sf::Font m_font;
     sf::Color m_defaultButtonColour = sf::Color::White ;
 
+    //UI Lives
+    std::vector<GameObject> m_lives;
 
     //Map and Backgraund
     TileMap m_tilemap;

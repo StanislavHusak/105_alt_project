@@ -42,12 +42,13 @@ void LevelWithTiles::handleInput(float dt)
 	m_player.handleInput(dt);
 
 	if (m_input.isPressed(sf::Keyboard::Scancode::Escape))
-		m_gameState.setCurrentState(State::PAUSE);
-	m_levelLoader.PausebuttonsInput(m_input, m_gameState);
+		m_gameState.setCurrentState(State::MENU);
+	//m_levelLoader.PausebuttonsInput(m_input, m_gameState);
 }
 
 void LevelWithTiles::update(float dt)
 {
+	m_levelLoader.updateUI(m_player);
 
 	if (m_flagLeverPulled)
 	{
@@ -156,6 +157,7 @@ void LevelWithTiles::render()
 	for (auto& flag : m_flags) m_window.draw(*flag);
 	m_window.draw(m_player);
 	m_window.draw(m_alertText);
+	m_levelLoader.drawUI(m_window, m_gameState.getCurrentState());
 	endDraw();
 }
 
