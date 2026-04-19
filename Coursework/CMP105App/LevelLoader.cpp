@@ -1,12 +1,12 @@
 #include "LevelLoader.h"
 
-LevelLoader::LevelLoader() : m_resumeButtonLabel(m_font), m_menuButtonLabel(m_font){
+LevelLoader::LevelLoader() : m_resumeButtonLabel(m_font), m_menuButtonLabel(m_font) {
 
 	//Setup tilemap and background
 	TileMapSetup(m_tilemap, "data/Tilemap.txt", { 40, 8 }, 18, 4, 20, 9, 1, "gfx/tilemap.png");
 	TileMapSetup(m_bgtilemap, "data/BgTilemap.txt", { 14, 3 }, 24, 9, 8, 3, 1, "gfx/tilemap-backgrounds.png");
 
-	if(!m_font.openFromFile("font/bitcount.ttf")) std::cerr << "no font found";
+	if (!m_font.openFromFile("font/bitcount.ttf")) std::cerr << "no font found";
 
 	//setup text to pause menu
 	UI_Text(m_resumeButtonLabel, 24, { 135, 243 }, "Resume", sf::Color::Black);
@@ -22,9 +22,13 @@ LevelLoader::LevelLoader() : m_resumeButtonLabel(m_font), m_menuButtonLabel(m_fo
 	//Setup UI Lives
 	for (int i = 0; i < 3; i++) {
 		GameObject live;
-		UI_Object(live, { 50, 50 }, { 50.f*i, 50 }, sf::Color::Red);
+		UI_Object(live, { 50, 50 }, { 0, 0 }, sf::Color::Red);
 		m_lives.push_back(live);
 	}
+
+	Checkpoints checkpoint;
+	checkpoint.setPosition({ 450, 250 });
+	m_Checkpoints.push_back(checkpoint);
 }
 
 void LevelLoader::TileMapSetup(TileMap& tilemap, std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int scaling, int num_columns, int num_rows, int sheet_spacing, std::string Texture) {
@@ -98,6 +102,16 @@ void LevelLoader::UI_Text(sf::Text& textObj, int characterSize, sf::Vector2f pos
 	textObj.setFillColor(color);
 }
 
+void LevelLoader::SetUpCheckPoints(std::string filename) {
+	std::ifstream data;
+	Checkpoints checkpoint;
+	float x, y;
+	while (data >> x >> y) {
+		checkpoint.setPosition({ x, y });
+		m_Checkpoints.push_back(checkpoint);
+	}
+	
+}
 
 void LevelLoader::PausebuttonsInput(Input& input, GameState& gameState){
 	if (gameState.getCurrentState() != State::PAUSE) return;
@@ -123,8 +137,23 @@ void LevelLoader::PausebuttonsInput(Input& input, GameState& gameState){
 	else { m_menuButton.setFillColor(m_defaultButtonColour); }
 }
 
-void LevelLoader::updateUI(Player& player) {
-	
+void LevelLoader::update(sf::RenderWindow& window, Player& player) {
+	auto view = window.getView().getCenter();
+
+	for (int i = 0; i < 3; i++) {
+		m_lives[i].setPosition({ view.x - 200 + i*60, view.y - 200 });
+
+		if (i < player.getLives()) {
+			m_lives[i].setFillColor(sf::Color::Red);
+		}
+		else {
+			m_lives[i].setFillColor(sf::Color::Black);
+		}
+	}
+
+	for (int i = 0; i < m_Checkpoints.size();i++) {
+		m_Checkpoints[i].update(player);
+	}
 }
 
 
@@ -132,12 +161,9 @@ void LevelLoader::draw(sf::RenderWindow& window, State state) {
 	m_tilemap.render(window);
 	m_bgtilemap.render(window);
 
-	if (state == State::PAUSE) {
-		window.draw(m_PausePanel);
-		window.draw(m_resumeButton);
-		window.draw(m_resumeButtonLabel);
-		window.draw(m_menuButton);
-		window.draw(m_menuButtonLabel);
+
+	for (int i = 0; i < m_Checkpoints.size();i++) {
+		window.draw(m_Checkpoints[i]);
 	}
 }
 void LevelLoader::drawUI(sf::RenderWindow& window, State state) {

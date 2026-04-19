@@ -48,7 +48,9 @@ void LevelWithTiles::handleInput(float dt)
 
 void LevelWithTiles::update(float dt)
 {
-	m_levelLoader.updateUI(m_player);
+	m_levelLoader.update(m_window, m_player);
+
+	if (m_player.getLives() <= 0) m_gameState.setCurrentState(State::MENU);
 
 	if (m_flagLeverPulled)
 	{

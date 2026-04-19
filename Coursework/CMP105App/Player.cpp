@@ -26,6 +26,8 @@ Player::Player()
 	setCollisionBox({ {12,12}, { 45,51 } });
 
 	m_isGrounded = false;
+
+	m_lives = FULL_LIVES;
 }
 
 void Player::handleInput(float dt)
@@ -173,8 +175,10 @@ bool Player::inEndRange()
 
 void Player::reset()
 {
-	setPosition({ 0, 50 });
+	setPosition(m_restartPosition);
 	m_velocity = { 0,0 };
 	m_leverPulled = false;
 	m_gameEndTriggered = false;
+	
+	m_lives -= 1;
 }

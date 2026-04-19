@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene.h"
+#include "Checkpoints.h"
 #include "Framework/Collision.h"
 #include "Framework/TileMap.h"
 #include "Player.h"
@@ -16,9 +17,10 @@ public:
 
     void draw(sf::RenderWindow& window, State state);
     void drawUI(sf::RenderWindow& window, State state);
-    void updateUI(Player& player);
+    void update(sf::RenderWindow& window, Player& player);
     void PausebuttonsInput(Input& input, GameState& gameState);
     void SetUpLivesInScene();
+    void SetUpCheckPoints(std::string filename);
 
     
     void TileMapSetup(TileMap& tilemap, std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int scaling, int num_columns, int num_rows, int sheet_spacing, std::string Texture);
@@ -51,5 +53,7 @@ private:
     sf::Text m_resumeButtonLabel;
     GameObject m_menuButton;
     sf::Text m_menuButtonLabel;
+
+    std::vector<Checkpoints> m_Checkpoints;
 };
 
