@@ -49,6 +49,7 @@ void LevelWithTiles::handleInput(float dt)
 void LevelWithTiles::update(float dt)
 {
 	m_levelLoader.update(m_window, m_player);
+	m_spanner.update(dt);
 
 	if (m_player.getLives() <= 0) m_gameState.setCurrentState(State::MENU);
 
@@ -158,6 +159,7 @@ void LevelWithTiles::render()
 	m_window.draw(m_lever);
 	for (auto& flag : m_flags) m_window.draw(*flag);
 	m_window.draw(m_player);
+	m_window.draw(m_spanner);
 	m_window.draw(m_alertText);
 	m_levelLoader.drawUI(m_window, m_gameState.getCurrentState());
 	endDraw();

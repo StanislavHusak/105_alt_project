@@ -7,6 +7,7 @@
 #include "Flag.h"
 #include <algorithm>
 #include "LevelLoader.h"
+#include "Spanner.h"
 
 class LevelWithTiles :
     public Scene
@@ -26,6 +27,8 @@ private:
     TileMap m_tilemap;
     TileMap m_bgtilemap;
     Player m_player;
+    Spanner m_spanner;
+
     sf::Texture m_tileTexture;
     Lever m_lever;
     sf::Text m_alertText;
