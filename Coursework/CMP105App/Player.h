@@ -3,6 +3,7 @@
 #include "Framework/Animation.h"
 #include <iostream>
 #include "Framework/AudioManager.h"
+#include "Spanner.h"
 
 
 class Player :
@@ -27,6 +28,7 @@ public:
     void setAudio(AudioManager* audio) { m_audio = audio; };
 
     int getLives() { return m_lives; };
+    bool getFlip() { return m_isFliped; };
     void setSpawnPosition(sf::Vector2f position) { m_restartPosition = position; };
 
 private:
@@ -50,6 +52,7 @@ private:
 
     float m_lives;
     sf::Vector2f m_restartPosition;
+    bool m_isFliped;
 
     const float SPRINT_COOLDOWN = 2.0f;
     const float SPRINT_SPEED_MULT = 2.5f;

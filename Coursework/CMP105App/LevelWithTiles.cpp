@@ -1,7 +1,7 @@
 #include "LevelWithTiles.h"
 
 LevelWithTiles::LevelWithTiles(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio)
-	: Scene(window, input, gameState, audio), m_alertText(m_font)
+	: Scene(window, input, gameState, audio), m_levelLoader(window, input, gameState, audio, m_player), m_alertText(m_font)
 {
 
 	// setup player 
@@ -40,16 +40,13 @@ LevelWithTiles::LevelWithTiles(sf::RenderWindow& window, Input& input, GameState
 void LevelWithTiles::handleInput(float dt)
 {
 	m_player.handleInput(dt);
-
-	if (m_input.isPressed(sf::Keyboard::Scancode::Escape))
-		m_gameState.setCurrentState(State::MENU);
-	//m_levelLoader.PausebuttonsInput(m_input, m_gameState);
+	m_levelLoader.handleInput(dt);
 }
 
 void LevelWithTiles::update(float dt)
 {
-	m_levelLoader.update(m_window, m_player);
-	m_spanner.update(dt);
+	m_levelLoader.update(dt);
+	
 
 	if (m_player.getLives() <= 0) m_gameState.setCurrentState(State::MENU);
 
@@ -78,12 +75,12 @@ void LevelWithTiles::update(float dt)
 		// turn off prompt
 		m_alertText.setString("");
 	}
-	else if (m_player.getPosition().y > WORLD_SIZE.y)
+	/*else if (m_player.getPosition().y > WORLD_SIZE.y)
 	{
 		m_alertText.setCharacterSize(24);
 		m_alertText.setPosition(m_window.getView().getCenter());
 		m_alertText.setString("Press R to reset");
-	}
+	}*/
 	// show text if the player in lever range
 	else if (m_player.inLeverRange())
 	{
@@ -154,14 +151,14 @@ void LevelWithTiles::render()
 {
 	beginDraw();
 	//Draw tilemap and background
-	m_levelLoader.draw(m_window, m_gameState.getCurrentState());
+	m_levelLoader.render();
 
 	m_window.draw(m_lever);
 	for (auto& flag : m_flags) m_window.draw(*flag);
 	m_window.draw(m_player);
 	m_window.draw(m_spanner);
 	m_window.draw(m_alertText);
-	m_levelLoader.drawUI(m_window, m_gameState.getCurrentState());
+	m_levelLoader.drawUI();
 	endDraw();
 }
 

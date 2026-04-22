@@ -8,18 +8,22 @@ class Spanner : public GameObject
 {
 public:
 	Spanner();
+	~Spanner();
 	void update(float dt);
-	void 
+	void Throwing(bool isRight);
 
+	bool getAllive() {return m_isAllive;};
+	void setAllive(bool allive) { m_isAllive = allive; };
 
 private:
 	sf::Texture m_texture;
 	sf::Vector2f m_velosity;
 	sf::Vector2f m_acce;
-	
 
-	float GRAVITY = 200.f;
-	float THROWINGFORCE = 100.f;
-	float SPEED = 10.f;
+	bool m_isAllive;
+
+	float GRAVITY = 500.f;
+	float THROWINGFORCE = 200.f;
+	float HORRIZONTAL_SPEED = 1.f;
 };
 

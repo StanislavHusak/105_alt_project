@@ -9,16 +9,19 @@
 #include "Flag.h"
 #include <algorithm>
 #include <fstream>
+#include "Spanner.h"
 
-class LevelLoader
+class LevelLoader : public BaseLevel
 {
 public:
-	LevelLoader();
+	LevelLoader(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio, Player& player);
 
-    void draw(sf::RenderWindow& window, State state);
-    void drawUI(sf::RenderWindow& window, State state);
-    void update(sf::RenderWindow& window, Player& player);
-    void PausebuttonsInput(Input& input, GameState& gameState);
+    void drawUI();
+    void handleInput(float dt) override;
+    void update(float dt) override;
+    void render() override;
+
+
     void SetUpLivesInScene();
     void SetUpCheckPoints(std::string filename);
 
@@ -30,7 +33,7 @@ public:
     TileMap& getTileMap() { return m_tilemap; }
     TileMap& getBGTilemap() { return m_bgtilemap; }
 
-
+    
 
 private:
     void updateCameraAndBackground();
@@ -53,6 +56,15 @@ private:
     sf::Text m_resumeButtonLabel;
     GameObject m_menuButton;
     sf::Text m_menuButtonLabel;
+
+    //Player
+    Player& m_player;
+
+    //Spanner
+    std::vector<Spanner> m_spanners;
+    bool m_isSpannerActive;
+    float m_timerCoulDownSpaner;
+    float m_coulDownSpaner = 1.f;
 
     std::vector<Checkpoints> m_Checkpoints;
 };

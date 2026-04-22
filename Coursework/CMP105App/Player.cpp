@@ -50,11 +50,11 @@ void Player::handleInput(float dt)
 		m_hasDoubleJumped = true;
 		m_audio->playSoundbyName("jump");
 	}
-	if (m_input->isKeyDown(sf::Keyboard::Scancode::R))	// Reset (for debugging)
-	{
-		setPosition({ 50,0 });
-		m_velocity = { 0,0 };
-	}
+	//if (m_input->isKeyDown(sf::Keyboard::Scancode::R))	// Reset (for debugging)
+	//{
+	//	setPosition({ 50,0 });
+	//	m_velocity = { 0,0 };
+	//}
 	if (m_input->isPressed(sf::Keyboard::Scancode::LControl) && m_sprintTimer <= 0)
 	{
 		if (!m_currAnim->getFlipped())
@@ -118,10 +118,12 @@ void Player::update(float dt)
 	if (getPosition().x < m_leftEdge)
 	{
 		setPosition({ m_leftEdge, getPosition().y });
+		m_isFliped = false;
 	}
 	if (getPosition().x > m_rightEdge - getSize().x)
 	{
 		setPosition({ m_rightEdge - getSize().x, getPosition().y});
+		m_isFliped = true;
 	}
 
 	m_currAnim->animate(dt);
