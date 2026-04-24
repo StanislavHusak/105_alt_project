@@ -22,6 +22,7 @@ public:
     void update(float dt) override;
     void render() override;
 
+    void reset();
 
     void SetUpLivesInScene();
     void SetUpCheckPoints(std::string filename);

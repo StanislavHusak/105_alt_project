@@ -14,7 +14,7 @@ LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& game
 	UI_Object(m_menuButton, { 216, 100 }, { 280, 208 }, m_defaultButtonColour);
 
 	//Setup pause panel
-	UI_Object(m_PausePanel, { 500, 300 }, { 50, 200 }, sf::Color::Yellow);
+	UI_Object(m_PausePanel, { 300, 300 }, { 50, 200 }, sf::Color::Yellow);
 
 	//Setup UI Lives
 	for (int i = 0; i < 3; i++) {
@@ -164,7 +164,7 @@ void LevelLoader::SetupGremlins(std::string filename) {
 void LevelLoader::UI_Object(GameObject& Gameobject, sf::Vector2f size, sf::Vector2f position, sf::Color color) {
 	Gameobject.setSize(size);
 	Gameobject.setPosition(position);
-	Gameobject.setCollisionBox({ {0,0}, Gameobject.getSize() });
+	Gameobject.setCollisionBox({ {0,-150}, Gameobject.getSize() });
 	Gameobject.setFillColor(color);
 }
 
@@ -188,7 +188,31 @@ void LevelLoader::SetUpCheckPoints(std::string filename) {
 
 void LevelLoader::handleInput(float dt) {
 	if (m_input.isPressed(sf::Keyboard::Scancode::Escape))
-		m_gameState.setCurrentState(State::MENU);
+		m_gameState.setCurrentState(State::PAUSE);
+	if (m_gameState.getCurrentState() == State::PAUSE) {
+
+		sf::Vector2i mousePos = { m_input.getMouseX(), m_input.getMouseY() };
+		if (m_input.isLeftMousePressed() && Collision::checkBoundingBox(m_resumeButton, mousePos))
+		{
+			m_gameState.setCurrentState(State::LEVELONE);
+		}
+		if (m_input.isLeftMousePressed() && Collision::checkBoundingBox(m_menuButton, mousePos))
+		{
+			m_gameState.setCurrentState(State::MENU);
+		}
+
+		if (Collision::checkBoundingBox(m_resumeButton, mousePos))
+		{
+			m_resumeButton.setFillColor(sf::Color::Red);
+		}
+		else { m_resumeButton.setFillColor(m_defaultButtonColour); }
+		if (Collision::checkBoundingBox(m_menuButton, mousePos))
+		{
+			m_menuButton.setFillColor(sf::Color::Red);
+		}
+		else { m_menuButton.setFillColor(m_defaultButtonColour); }
+		return;
+	}
 
 	//throw spaner
 	if (!m_isSpannerActive && m_input.isKeyDown(sf::Keyboard::Scancode::R)) {
@@ -202,15 +226,6 @@ void LevelLoader::handleInput(float dt) {
 	//Pause buttons
 	if (m_gameState.getCurrentState() != State::PAUSE) return;
 
-	sf::Vector2i mousePos{m_input.getMouseX(), m_input.getMouseY() };
-	if (m_input.isLeftMousePressed() && Collision::checkBoundingBox(m_resumeButton, mousePos))
-	{
-		m_gameState.setCurrentState(State::LEVELONE);
-	}
-	if (m_input.isLeftMousePressed() && Collision::checkBoundingBox(m_menuButton, mousePos))
-	{
-		m_gameState.setCurrentState(State::MENU);
-	}
 }
 
 void LevelLoader::update(float dt) {
@@ -274,11 +289,19 @@ void LevelLoader::update(float dt) {
 		}
 	}
 
-	//Lives move with screen
+	//Lives and pause menu move with screen
 	auto view = m_window.getView().getCenter();
+
+	m_PausePanel.setPosition({ view.x - 150, view.y - 200 });
+	m_resumeButton.setPosition({ view.x - 108, view.y - 150 });
+	m_resumeButtonLabel.setPosition({ m_resumeButton.getPosition().x + 60, m_resumeButton.getPosition().y + 30 });
+	m_menuButton.setPosition({ view.x - 108, view.y - 10});
+	m_menuButtonLabel.setPosition({ m_menuButton.getPosition().x + 60, m_menuButton.getPosition().y + 30 });
+
+
 	for (int i = 0; i < 3; i++) {
 		m_lives[i].setPosition({ view.x - 200 + i*60, view.y - 200 });
-
+		
 		if (i < m_player.getLives()) {
 			m_lives[i].setFillColor(sf::Color::Red);
 		}
@@ -287,25 +310,12 @@ void LevelLoader::update(float dt) {
 		}
 	}
 
+	
+
+
 	for (int i = 0; i < m_Checkpoints.size();i++) {
 		m_Checkpoints[i].update(m_player);
 	}
-
-	//Pause hover button
-	if (m_gameState.getCurrentState() != State::PAUSE) return;
-
-	sf::Vector2i mousePos{ m_input.getMouseX(), m_input.getMouseY() };
-
-	if (Collision::checkBoundingBox(m_resumeButton, mousePos))
-	{
-		m_resumeButton.setFillColor(sf::Color::Red);
-	}
-	else { m_resumeButton.setFillColor(m_defaultButtonColour); }
-	if (Collision::checkBoundingBox(m_menuButton, mousePos))
-	{
-		m_menuButton.setFillColor(sf::Color::Red);
-	}
-	else { m_menuButton.setFillColor(m_defaultButtonColour); }
 }
 
 void LevelLoader::render() {
@@ -341,4 +351,11 @@ void LevelLoader::drawUI() {
 		m_window.draw(m_menuButton);
 		m_window.draw(m_menuButtonLabel);
 	}
+}
+
+void LevelLoader::reset() {
+	m_player.setLives(3);
+	m_player.reset();
+
+	for()
 }
