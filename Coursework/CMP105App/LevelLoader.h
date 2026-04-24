@@ -37,12 +37,13 @@ public:
 
     TileMap& getTileMap() { return m_tilemap; }
     TileMap& getBGTilemap() { return m_bgtilemap; }
-    
+
+    void updateCameraAndBackground(sf::Vector2i WORLD_SIZE, sf::Vector2i VIEW_SIZE);
 
     
 
 private:
-    void updateCameraAndBackground();
+    
 
 
     sf::Font m_font;

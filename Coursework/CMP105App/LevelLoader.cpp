@@ -198,6 +198,7 @@ void LevelLoader::handleInput(float dt) {
 		}
 		if (m_input.isLeftMousePressed() && Collision::checkBoundingBox(m_menuButton, mousePos))
 		{
+			reset();
 			m_gameState.setCurrentState(State::MENU);
 		}
 
@@ -229,14 +230,21 @@ void LevelLoader::handleInput(float dt) {
 }
 
 void LevelLoader::update(float dt) {
+	// reset if fallen too far
+	if (m_player.getPosition().y > 1200)
+	{
+		m_player.restart();
+		m_audio.playSoundbyName("death");
+	}
+
 
 	if (m_player.getLives() <= 0) { 
 		m_gameState.setCurrentState(State::MENU); 
-		m_player.setPosition({ 24, 100 });
-		m_player.setLives(3);
 		for (auto& checkpoint : m_Checkpoints) {
 			checkpoint.setIsActive(false);
 		}
+
+		reset();
 	}
 
 	//update Spanner
@@ -282,8 +290,7 @@ void LevelLoader::update(float dt) {
 					grimlin.setCollider(false);
 				}
 				if (Collision::checkBoundingBox(grimlin, m_player)) {
-					std::cerr << "Iam here\n";
-					m_player.reset();
+					//m_player.restart();
 				}
 			}
 		}
@@ -310,9 +317,6 @@ void LevelLoader::update(float dt) {
 		}
 	}
 
-	
-
-
 	for (int i = 0; i < m_Checkpoints.size();i++) {
 		m_Checkpoints[i].update(m_player);
 	}
@@ -338,6 +342,24 @@ void LevelLoader::render() {
 	}
 }
 
+void LevelLoader::updateCameraAndBackground(sf::Vector2i WORLD_SIZE, sf::Vector2i VIEW_SIZE)
+{
+	auto view = m_window.getView();
+	auto player_pos = m_player.getPosition() + m_player.getSize() * 0.5f;
+
+	float halfViewWidth = VIEW_SIZE.x / 2.0f;
+	float halfViewHeight = VIEW_SIZE.y / 2.0f;
+
+	player_pos.x = std::clamp(player_pos.x, halfViewWidth, WORLD_SIZE.x - halfViewWidth);
+	player_pos.y = std::clamp(player_pos.y, halfViewHeight, WORLD_SIZE.y - halfViewHeight);
+
+	view.setCenter(player_pos);
+	m_window.setView(view);
+
+	m_bgtilemap.setPosition({ player_pos.x - halfViewWidth, 0 });
+}
+
+
 void LevelLoader::drawUI() {
 
 	for (int i = 0;i < 3; i++) {
@@ -354,8 +376,18 @@ void LevelLoader::drawUI() {
 }
 
 void LevelLoader::reset() {
-	m_player.setLives(3);
 	m_player.reset();
 
-	for()
+	for (auto& grimlin : m_grimlins) {
+		grimlin.setAlive(true);
+		grimlin.setCollider(true);
+	}
+
+	m_spanners.clear();
+	m_isSpannerActive = false;
+	m_timerCoulDownSpaner = 0.f;
+
+	for (auto& checkpoint : m_Checkpoints) {
+		checkpoint.setIsActive(false);
+	}
 }

@@ -121,34 +121,12 @@ void LevelWithTiles::update(float dt)
 	}
 
 
-	// reset if fallen too far
-	if (m_player.getPosition().y > 1200)
-	{
-		m_player.reset();
-		m_audio.playSoundbyName("death");
-	}
 
 	// camera follows player, bounded.
-	updateCameraAndBackground();
+	m_levelLoader.updateCameraAndBackground(WORLD_SIZE,VIEW_SIZE);
 
 }
 
-void LevelWithTiles::updateCameraAndBackground()
-{
-	auto view = m_window.getView();
-	auto player_pos = m_player.getPosition() + m_player.getSize() * 0.5f;
-
-	float halfViewWidth = VIEW_SIZE.x / 2.0f;
-	float halfViewHeight = VIEW_SIZE.y / 2.0f;
-
-	player_pos.x = std::clamp(player_pos.x, halfViewWidth, WORLD_SIZE.x - halfViewWidth);
-	player_pos.y = std::clamp(player_pos.y, halfViewHeight, WORLD_SIZE.y - halfViewHeight);
-
-	view.setCenter(player_pos);
-	m_window.setView(view);
-
-	m_bgtilemap.setPosition({ player_pos.x - halfViewWidth, 0 });
-}
 
 void LevelWithTiles::render()
 {

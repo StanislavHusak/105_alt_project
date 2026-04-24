@@ -176,7 +176,7 @@ bool Player::inEndRange()
 	return (getPosition() - m_endPosition).lengthSquared() < ACTIVATE_RANGE_SQUARED;
 }
 
-void Player::reset()
+void Player::restart()
 {
 	setPosition(m_restartPosition);
 	m_velocity = { 0,0 };
@@ -184,4 +184,13 @@ void Player::reset()
 	m_gameEndTriggered = false;
 	
 	m_lives -= 1;
+}
+void Player::reset() {
+	setPosition({ 0, 50 });
+	m_restartPosition = { 0, 50 };
+	m_velocity = { 0,0 };
+	m_leverPulled = false;
+	m_gameEndTriggered = false;
+
+	m_lives = 3;
 }
