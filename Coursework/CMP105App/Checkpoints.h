@@ -13,11 +13,12 @@ class Checkpoints : public GameObject
 {
 public:
 	Checkpoints();
+	void setIsActive(bool isActive) { m_isActive = isActive; };
 
 	void update(Player& player);
 private:
 	sf::Color m_defaultColor = sf::Color::Yellow;
 	sf::Color m_activeColor;
-	bool isActive;
+	bool m_isActive;
 };
 

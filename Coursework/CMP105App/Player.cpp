@@ -24,6 +24,7 @@ Player::Player()
 	m_sprint.setFrameSpeed(1.4 / 15.0f);
 
 	setCollisionBox({ {12,12}, { 45,51 } });
+	setCollider(true);
 
 	m_isGrounded = false;
 
@@ -36,8 +37,10 @@ void Player::handleInput(float dt)
 
 	if (m_input->isKeyDown(sf::Keyboard::Scancode::A))
 		m_accel.x -= SPEED;
+		
 	if (m_input->isKeyDown(sf::Keyboard::Scancode::D))
 		m_accel.x += SPEED;
+		
 	if (m_input->isPressed(sf::Keyboard::Scancode::Space) && m_isGrounded)
 	{
 		m_velocity.y = - JUMP_FORCE;
@@ -118,12 +121,10 @@ void Player::update(float dt)
 	if (getPosition().x < m_leftEdge)
 	{
 		setPosition({ m_leftEdge, getPosition().y });
-		m_isFliped = false;
 	}
 	if (getPosition().x > m_rightEdge - getSize().x)
 	{
 		setPosition({ m_rightEdge - getSize().x, getPosition().y});
-		m_isFliped = true;
 	}
 
 	m_currAnim->animate(dt);

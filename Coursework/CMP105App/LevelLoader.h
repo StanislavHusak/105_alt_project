@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <fstream>
 #include "Spanner.h"
+#include "Gremlin.h"
 
 class LevelLoader : public BaseLevel
 {
@@ -26,12 +27,16 @@ public:
     void SetUpCheckPoints(std::string filename);
 
     
-    void TileMapSetup(TileMap& tilemap, std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int scaling, int num_columns, int num_rows, int sheet_spacing, std::string Texture);
+    void TileMapSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture);
+    void BgTileMapSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture);
+    void SetupGremlins(std::string filename);
+
     void UI_Object(GameObject& Gameobject,sf::Vector2f size, sf::Vector2f position, sf::Color color);
     void UI_Text(sf::Text& textObj, int characterSize, sf::Vector2f position, std::string text, sf::Color color);
 
     TileMap& getTileMap() { return m_tilemap; }
     TileMap& getBGTilemap() { return m_bgtilemap; }
+    
 
     
 
@@ -48,6 +53,7 @@ private:
     //Map and Backgraund
     TileMap m_tilemap;
     TileMap m_bgtilemap;
+    std::string m_tileMapData, m_bgtileMapData;
 
     //Pause Menu
     GameObject m_PausePanel;
@@ -65,6 +71,9 @@ private:
     bool m_isSpannerActive;
     float m_timerCoulDownSpaner;
     float m_coulDownSpaner = 1.f;
+
+    //Grimlins
+    std::vector<Gremlin> m_grimlins;
 
     std::vector<Checkpoints> m_Checkpoints;
 };

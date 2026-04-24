@@ -4,6 +4,12 @@ LevelWithTiles::LevelWithTiles(sf::RenderWindow& window, Input& input, GameState
 	: Scene(window, input, gameState, audio), m_levelLoader(window, input, gameState, audio, m_player), m_alertText(m_font)
 {
 
+	//Setup tilemap and background
+	m_levelLoader.TileMapSetup( "data/Tilemap.txt", {40, 8}, 18, 20, 9, 1, "gfx/tilemap.png");
+	m_levelLoader.BgTileMapSetup("data/TilemapBackground.txt", { 14, 3 }, 24, 8, 3, 1, "gfx/tilemap-backgrounds.png");
+
+	m_levelLoader.SetupGremlins("data/GremlinsPosition.txt");
+
 	// setup player 
 	m_player.setInput(&m_input);
 	m_player.setEdges(0, WORLD_SIZE.x);
@@ -46,9 +52,6 @@ void LevelWithTiles::handleInput(float dt)
 void LevelWithTiles::update(float dt)
 {
 	m_levelLoader.update(dt);
-	
-
-	if (m_player.getLives() <= 0) m_gameState.setCurrentState(State::MENU);
 
 	if (m_flagLeverPulled)
 	{

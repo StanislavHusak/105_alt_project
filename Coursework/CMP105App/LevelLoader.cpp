@@ -2,9 +2,6 @@
 
 LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio, Player& player) :BaseLevel(window, input, gameState, audio), m_resumeButtonLabel(m_font), m_menuButtonLabel(m_font), m_player(player){
 
-	//Setup tilemap and background
-	TileMapSetup(m_tilemap, "data/Tilemap.txt", { 40, 8 }, 18, 4, 20, 9, 1, "gfx/tilemap.png");
-	TileMapSetup(m_bgtilemap, "data/BgTilemap.txt", { 14, 3 }, 24, 9, 8, 3, 1, "gfx/tilemap-backgrounds.png");
 
 	if (!m_font.openFromFile("font/bitcount.ttf")) std::cerr << "no font found";
 
@@ -31,15 +28,19 @@ LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& game
 	m_Checkpoints.push_back(checkpoint);
 
 	m_isSpannerActive = false;
+
+	
+
 }
 
-void LevelLoader::TileMapSetup(TileMap& tilemap, std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int scaling, int num_columns, int num_rows, int sheet_spacing, std::string Texture) {
+void LevelLoader::TileMapSetup( std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture) {
+	
 	GameObject tile;
 	std::vector<GameObject> tileSet;
 
 	// Set GameObject size (Scaling up 4x for visibility)
 	// 4 * 18 = 3 * 24 = 72 (dino size is 24).
-	tile.setSize(sf::Vector2f(tile_size * scaling, tile_size * scaling));
+	tile.setSize(sf::Vector2f(tile_size * 4, tile_size * 4));
 	tile.setCollisionBox({ { 0,0 }, tile.getSize() });
 
 	for (int i = 0; i < num_columns * num_rows; i++)
@@ -80,15 +81,85 @@ void LevelLoader::TileMapSetup(TileMap& tilemap, std::string tileMapData, sf::Ve
 	data.close();
 	//__________//
 
-	tilemap.loadTexture("gfx/tilemap.png");
-	tilemap.setTileSet(tileSet);
-	tilemap.setTileMap(tileMap, mapDimensions);
-	tilemap.setPosition({ 0, 100 });
-	tilemap.buildLevel();
+	m_tilemap.loadTexture(Texture);
+	m_tilemap.setTileSet(tileSet);
+	m_tilemap.setTileMap(tileMap, mapDimensions);
+	m_tilemap.setPosition({ 0, 100 });
+	m_tilemap.buildLevel();
+
+	std::cerr << m_tilemap.getLevel() << "\n";
 
 	tileSet.clear();
 }
 
+void LevelLoader::BgTileMapSetup( std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture) {
+	GameObject tile;
+	std::vector<GameObject> tileSet;
+
+	// Set GameObject size (Scaling up 4x for visibility)
+	// 4 * 18 = 3 * 24 = 72 (dino size is 24).
+	tile.setSize(sf::Vector2f(tile_size * 9, tile_size * 9));
+	tile.setCollisionBox({ { 0,0 }, tile.getSize() });
+
+	for (int i = 0; i < num_columns * num_rows; i++)
+	{
+		int row = i / num_columns;
+		int col = i % num_columns;
+
+		tile.setTextureRect({
+			{(tile_size + sheet_spacing) * col, (tile_size + sheet_spacing) * row},
+			{tile_size, tile_size} });
+		if (col <= 4 || col >= 12) tile.setCollider(true);
+		else tile.setCollider(false);
+		tileSet.push_back(tile);
+	}
+
+	// Add Blank
+	tile.setTextureRect({ {0, 0}, {-24, -24} }); // Empty rect for blank
+	int b = tileSet.size();
+	tile.setCollider(false);
+	tileSet.push_back(tile);
+
+	//Get tileMap//
+	std::string a;
+	std::vector<int> tileMap;
+	std::ifstream data(tileMapData);
+	if (!data.is_open()) std::cerr << "Failed to open data \n";
+	int i = 0;
+	while (data >> a) {
+		if (a == "b") {
+			tileMap.push_back(b);
+		}
+		else {
+			int c = stoi(a);
+			tileMap.push_back(c);
+		}
+
+	};
+	data.close();
+	//__________//
+
+	m_bgtilemap.loadTexture(Texture);
+	m_bgtilemap.setTileSet(tileSet);
+	m_bgtilemap.setTileMap(tileMap, mapDimensions);
+	m_bgtilemap.setPosition({ 0, 0 });
+	m_bgtilemap.buildLevel();
+
+	tileSet.clear();
+}
+
+void LevelLoader::SetupGremlins(std::string filename) {
+	float x, y;
+	std::ifstream data(filename);
+	if (!data.is_open()) std::cerr << "Failed to open data \n";
+	int i = 0;
+	while (data >> x >> y) {
+		Gremlin grimlin;
+		grimlin.setPosition({ x, y });
+		m_grimlins.push_back(grimlin);
+	};
+	data.close();
+}
 
 void LevelLoader::UI_Object(GameObject& Gameobject, sf::Vector2f size, sf::Vector2f position, sf::Color color) {
 	Gameobject.setSize(size);
@@ -144,10 +215,18 @@ void LevelLoader::handleInput(float dt) {
 
 void LevelLoader::update(float dt) {
 
+	if (m_player.getLives() <= 0) { 
+		m_gameState.setCurrentState(State::MENU); 
+		m_player.setPosition({ 24, 100 });
+		m_player.setLives(3);
+		for (auto& checkpoint : m_Checkpoints) {
+			checkpoint.setIsActive(false);
+		}
+	}
+
 	//update Spanner
 	for (auto& spanner : m_spanners) {
-		if (spanner.getAllive()) {
-			std::cerr << "isActive\n";
+		if (spanner.isAlive()) {
 			spanner.update(dt);
 		}
 	}
@@ -163,19 +242,34 @@ void LevelLoader::update(float dt) {
 		}
 	}
 
-	//Collision Spanner with ground
+	//Collision
 	std::vector<GameObject>& level = *m_tilemap.getLevel();
-	for (auto& t : level)
-	{
-		if (t.isCollider() && Collision::checkBoundingBox(m_player, t))
+	for (auto& spanner : m_spanners) {
+		for (auto& t : level)
 		{
-			m_player.collisionResponse(t);
-		}
+			if (t.isCollider() && Collision::checkBoundingBox(m_player, t))
+			{
+				m_player.collisionResponse(t);
+			}
 
-		for (auto& spanner : m_spanners) {
+
 			if (t.isCollider() && Collision::checkBoundingBox(spanner, t))
 			{
-				spanner.setAllive(false);
+				spanner.setAlive(false);
+
+			}
+		}
+		for (auto& grimlin : m_grimlins) {
+			if (spanner.isAlive()) {
+				if (Collision::checkBoundingBox(spanner, grimlin)) {
+					spanner.setAlive(false);
+					grimlin.setAlive(false);
+					grimlin.setCollider(false);
+				}
+				if (Collision::checkBoundingBox(grimlin, m_player)) {
+					std::cerr << "Iam here\n";
+					m_player.reset();
+				}
 			}
 		}
 	}
@@ -215,16 +309,21 @@ void LevelLoader::update(float dt) {
 }
 
 void LevelLoader::render() {
-	m_tilemap.render(m_window);
 	m_bgtilemap.render(m_window);
+	m_tilemap.render(m_window);
 
 
 	for (int i = 0; i < m_Checkpoints.size();i++) {
 		m_window.draw(m_Checkpoints[i]);
 	}
 	for (auto& spanner: m_spanners) {
-		if (spanner.getAllive()) {
+		if (spanner.isAlive()) {
 			m_window.draw(spanner);
+		}
+	}
+	for (auto& grimlin : m_grimlins) {
+		if (grimlin.isAlive()) {
+			m_window.draw(grimlin);
 		}
 	}
 }

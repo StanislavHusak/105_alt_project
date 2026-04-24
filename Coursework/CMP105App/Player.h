@@ -28,6 +28,7 @@ public:
     void setAudio(AudioManager* audio) { m_audio = audio; };
 
     int getLives() { return m_lives; };
+    void setLives(int num) { m_lives = num; }
     bool getFlip() { return m_isFliped; };
     void setSpawnPosition(sf::Vector2f position) { m_restartPosition = position; };
 
