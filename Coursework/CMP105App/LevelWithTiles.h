@@ -37,7 +37,7 @@ private:
     bool m_flagLeverPulled = false;
     float m_promptTimer;
 
-    //Pause
+    
     
 
     LevelLoader m_levelLoader;

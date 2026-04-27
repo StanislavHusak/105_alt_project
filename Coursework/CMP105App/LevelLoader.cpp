@@ -1,25 +1,30 @@
 #include "LevelLoader.h"
 
-LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio, Player& player) :BaseLevel(window, input, gameState, audio), m_resumeButtonLabel(m_font), m_menuButtonLabel(m_font), m_player(player){
+LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio, Player& player) :BaseLevel(window, input, gameState, audio), m_player(player), m_resumeButtonLabel(m_font), m_menuButtonLabel(m_font), m_maineText(m_font), m_restartButtonLabel(m_font) {
 
 
 	if (!m_font.openFromFile("font/bitcount.ttf")) std::cerr << "no font found";
 
-	//setup text to pause menu
-	UI_Text(m_resumeButtonLabel, 24, { 135, 243 }, "Resume", sf::Color::Black);
-	UI_Text(m_menuButtonLabel, 24, { 350, 243 }, "Menu", sf::Color::Black);
+	//setup text to pause, game over, win menu
+	m_resumeButtonLabel = UI_Text( 24, { 135, 243 }, "Resume", sf::Color::Black);
+	m_menuButtonLabel = UI_Text(24, { 350, 243 }, "Menu", sf::Color::Black);
+	m_restartButtonLabel = UI_Text(24, { 135, 243 }, "Restart", sf::Color::Black);
 
-	//Setup pause buttons
-	UI_Object(m_resumeButton, { 216, 100 }, { 58, 208 }, m_defaultButtonColour);
-	UI_Object(m_menuButton, { 216, 100 }, { 280, 208 }, m_defaultButtonColour);
+	//Setup pause, game over, restart buttons
+	m_resumeButton = UI_Object({ 150, 80 }, { 0, 0 }, m_defaultButtonColour);
+	m_restartButton = UI_Object({ 150, 80 }, { 0, 0 }, m_defaultButtonColour);
+	m_menuButton = UI_Object({ 150, 80 }, { 0, 0 }, m_defaultButtonColour);
 
 	//Setup pause panel
-	UI_Object(m_PausePanel, { 300, 300 }, { 50, 200 }, sf::Color::Yellow);
+	
+	m_Panel = UI_Object({ 432, 432 }, {0, 0 }, sf::Color::Yellow);
+
+
 
 	//Setup UI Lives
 	for (int i = 0; i < 3; i++) {
 		GameObject live;
-		UI_Object(live, { 50, 50 }, { 0, 0 }, sf::Color::Red);
+		live = UI_Object( { 50, 50 }, { 0, 0 }, sf::Color::Red);
 		m_lives.push_back(live);
 	}
 
@@ -30,160 +35,9 @@ LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& game
 	m_isSpannerActive = false;
 
 	
-
-}
-
-void LevelLoader::TileMapSetup( std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture) {
-	
-	GameObject tile;
-	std::vector<GameObject> tileSet;
-
-	// Set GameObject size (Scaling up 4x for visibility)
-	// 4 * 18 = 3 * 24 = 72 (dino size is 24).
-	tile.setSize(sf::Vector2f(tile_size * 4, tile_size * 4));
-	tile.setCollisionBox({ { 0,0 }, tile.getSize() });
-
-	for (int i = 0; i < num_columns * num_rows; i++)
-	{
-		int row = i / num_columns;
-		int col = i % num_columns;
-
-		tile.setTextureRect({
-			{(tile_size + sheet_spacing) * col, (tile_size + sheet_spacing) * row},
-			{tile_size, tile_size} });
-		if (col <= 4 || col >= 12) tile.setCollider(true);
-		else tile.setCollider(false);
-		tileSet.push_back(tile);
+	if (m_stateLevel == State::LEVELONE) {
+		std::cerr << "Level one\n";
 	}
-
-	// Add Blank
-	tile.setTextureRect({ {0, 0}, {-24, -24} }); // Empty rect for blank
-	int b = tileSet.size();
-	tile.setCollider(false);
-	tileSet.push_back(tile);
-
-	//Get tileMap//
-	std::string a;
-	std::vector<int> tileMap;
-	std::ifstream data(tileMapData);
-	if (!data.is_open()) std::cerr << "Failed to open data \n";
-	int i = 0;
-	while (data >> a) {
-		if (a == "b") {
-			tileMap.push_back(b);
-		}
-		else {
-			int c = stoi(a);
-			tileMap.push_back(c);
-		}
-
-	};
-	data.close();
-	//__________//
-
-	m_tilemap.loadTexture(Texture);
-	m_tilemap.setTileSet(tileSet);
-	m_tilemap.setTileMap(tileMap, mapDimensions);
-	m_tilemap.setPosition({ 0, 100 });
-	m_tilemap.buildLevel();
-
-	std::cerr << m_tilemap.getLevel() << "\n";
-
-	tileSet.clear();
-}
-
-void LevelLoader::BgTileMapSetup( std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture) {
-	GameObject tile;
-	std::vector<GameObject> tileSet;
-
-	// Set GameObject size (Scaling up 4x for visibility)
-	// 4 * 18 = 3 * 24 = 72 (dino size is 24).
-	tile.setSize(sf::Vector2f(tile_size * 9, tile_size * 9));
-	tile.setCollisionBox({ { 0,0 }, tile.getSize() });
-
-	for (int i = 0; i < num_columns * num_rows; i++)
-	{
-		int row = i / num_columns;
-		int col = i % num_columns;
-
-		tile.setTextureRect({
-			{(tile_size + sheet_spacing) * col, (tile_size + sheet_spacing) * row},
-			{tile_size, tile_size} });
-		if (col <= 4 || col >= 12) tile.setCollider(true);
-		else tile.setCollider(false);
-		tileSet.push_back(tile);
-	}
-
-	// Add Blank
-	tile.setTextureRect({ {0, 0}, {-24, -24} }); // Empty rect for blank
-	int b = tileSet.size();
-	tile.setCollider(false);
-	tileSet.push_back(tile);
-
-	//Get tileMap//
-	std::string a;
-	std::vector<int> tileMap;
-	std::ifstream data(tileMapData);
-	if (!data.is_open()) std::cerr << "Failed to open data \n";
-	int i = 0;
-	while (data >> a) {
-		if (a == "b") {
-			tileMap.push_back(b);
-		}
-		else {
-			int c = stoi(a);
-			tileMap.push_back(c);
-		}
-
-	};
-	data.close();
-	//__________//
-
-	m_bgtilemap.loadTexture(Texture);
-	m_bgtilemap.setTileSet(tileSet);
-	m_bgtilemap.setTileMap(tileMap, mapDimensions);
-	m_bgtilemap.setPosition({ 0, 0 });
-	m_bgtilemap.buildLevel();
-
-	tileSet.clear();
-}
-
-void LevelLoader::SetupGremlins(std::string filename) {
-	float x, y;
-	std::ifstream data(filename);
-	if (!data.is_open()) std::cerr << "Failed to open data \n";
-	int i = 0;
-	while (data >> x >> y) {
-		Gremlin grimlin;
-		grimlin.setPosition({ x, y });
-		m_grimlins.push_back(grimlin);
-	};
-	data.close();
-}
-
-void LevelLoader::UI_Object(GameObject& Gameobject, sf::Vector2f size, sf::Vector2f position, sf::Color color) {
-	Gameobject.setSize(size);
-	Gameobject.setPosition(position);
-	Gameobject.setCollisionBox({ {0,-150}, Gameobject.getSize() });
-	Gameobject.setFillColor(color);
-}
-
-void LevelLoader::UI_Text(sf::Text& textObj, int characterSize, sf::Vector2f position, std::string text, sf::Color color) {
-	textObj.setCharacterSize(characterSize);		// setup labels
-	textObj.setPosition(position);
-	textObj.setString(text);
-	textObj.setFillColor(color);
-}
-
-void LevelLoader::SetUpCheckPoints(std::string filename) {
-	std::ifstream data;
-	Checkpoints checkpoint;
-	float x, y;
-	while (data >> x >> y) {
-		checkpoint.setPosition({ x, y });
-		m_Checkpoints.push_back(checkpoint);
-	}
-	
 }
 
 void LevelLoader::handleInput(float dt) {
@@ -192,10 +46,19 @@ void LevelLoader::handleInput(float dt) {
 	if (m_gameState.getCurrentState() == State::PAUSE) {
 
 		sf::Vector2i mousePos = { m_input.getMouseX(), m_input.getMouseY() };
+		
 		if (m_input.isLeftMousePressed() && Collision::checkBoundingBox(m_resumeButton, mousePos))
 		{
-			m_gameState.setCurrentState(State::LEVELONE);
+			m_gameState.setCurrentState(m_stateLevel);
 		}
+
+		if (m_input.isLeftMousePressed() && Collision::checkBoundingBox(m_restartButton, mousePos))
+		{
+			m_gameState.setCurrentState(m_stateLevel);
+			reset();
+				
+		}
+
 		if (m_input.isLeftMousePressed() && Collision::checkBoundingBox(m_menuButton, mousePos))
 		{
 			reset();
@@ -207,6 +70,13 @@ void LevelLoader::handleInput(float dt) {
 			m_resumeButton.setFillColor(sf::Color::Red);
 		}
 		else { m_resumeButton.setFillColor(m_defaultButtonColour); }
+
+		if (Collision::checkBoundingBox(m_restartButton, mousePos))
+		{
+			m_restartButton.setFillColor(sf::Color::Red);
+		}
+		else { m_restartButton.setFillColor(m_defaultButtonColour); }
+
 		if (Collision::checkBoundingBox(m_menuButton, mousePos))
 		{
 			m_menuButton.setFillColor(sf::Color::Red);
@@ -297,13 +167,20 @@ void LevelLoader::update(float dt) {
 	}
 
 	//Lives and pause menu move with screen
-	auto view = m_window.getView().getCenter();
+	sf::Vector2f pos = m_player.getPosition();
 
-	m_PausePanel.setPosition({ view.x - 150, view.y - 200 });
-	m_resumeButton.setPosition({ view.x - 108, view.y - 150 });
-	m_resumeButtonLabel.setPosition({ m_resumeButton.getPosition().x + 60, m_resumeButton.getPosition().y + 30 });
-	m_menuButton.setPosition({ view.x - 108, view.y - 10});
-	m_menuButtonLabel.setPosition({ m_menuButton.getPosition().x + 60, m_menuButton.getPosition().y + 30 });
+	m_Panel.setPosition({ m_Panel.getPosition().x + pos.x, m_Panel.getPosition().x + pos.x });
+
+	m_resumeButton.setPosition({ view.x + 54, view.y +108  });
+	m_resumeButton.setCollisionBox({ m_resumeButton.getPosition(), m_resumeButton.getSize() });
+	m_resumeButtonLabel.setPosition({ m_resumeButton.getPosition().x + 10, m_resumeButton.getPosition().y + 10});
+
+	m_restartButton.setPosition({ view.x + 54, view.y });
+	m_restartButtonLabel.setPosition({ m_menuButton.getPosition().x + 20, m_menuButton.getPosition().y + 10 });
+
+	m_menuButton.setPosition({ view.x + 54, view.y - 108});
+	m_menuButtonLabel.setPosition({ m_menuButton.getPosition().x + 20, m_menuButton.getPosition().y + 10 });
+
 
 
 	for (int i = 0; i < 3; i++) {
@@ -342,6 +219,183 @@ void LevelLoader::render() {
 	}
 }
 
+void LevelLoader::drawUI() {
+
+	for (int i = 0;i < 3; i++) {
+		m_window.draw(m_lives[i]);
+	}
+
+	if (m_gameState.getCurrentState() == State::PAUSE) {
+		m_window.draw(m_Panel);
+
+		m_window.draw(m_resumeButton);
+		m_window.draw(m_resumeButtonLabel);
+
+		m_window.draw(m_restartButton);
+		m_window.draw(m_restartButtonLabel);
+
+		m_window.draw(m_menuButton);
+		m_window.draw(m_menuButtonLabel);
+	}
+}
+
+void LevelLoader::TileMapSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture) {
+
+	GameObject tile;
+	std::vector<GameObject> tileSet;
+
+	// Set GameObject size (Scaling up 4x for visibility)
+	// 4 * 18 = 3 * 24 = 72 (dino size is 24).
+	tile.setSize(sf::Vector2f(tile_size * 4, tile_size * 4));
+	tile.setCollisionBox({ { 0,0 }, tile.getSize() });
+
+	for (int i = 0; i < num_columns * num_rows; i++)
+	{
+		int row = i / num_columns;
+		int col = i % num_columns;
+
+		tile.setTextureRect({
+			{(tile_size + sheet_spacing) * col, (tile_size + sheet_spacing) * row},
+			{tile_size, tile_size} });
+		if (col <= 4 || col >= 12) tile.setCollider(true);
+		else tile.setCollider(false);
+		tileSet.push_back(tile);
+	}
+
+	// Add Blank
+	tile.setTextureRect({ {0, 0}, {-24, -24} }); // Empty rect for blank
+	int b = tileSet.size();
+	tile.setCollider(false);
+	tileSet.push_back(tile);
+
+	//Get tileMap//
+	std::string a;
+	std::vector<int> tileMap;
+	std::ifstream data(tileMapData);
+	if (!data.is_open()) std::cerr << "Failed to open data \n";
+	int i = 0;
+	while (data >> a) {
+		if (a == "b") {
+			tileMap.push_back(b);
+		}
+		else {
+			int c = stoi(a);
+			tileMap.push_back(c);
+		}
+
+	};
+	data.close();
+	//__________//
+
+	m_tilemap.loadTexture(Texture);
+	m_tilemap.setTileSet(tileSet);
+	m_tilemap.setTileMap(tileMap, mapDimensions);
+	m_tilemap.setPosition({ 0, 100 });
+	m_tilemap.buildLevel();
+
+	std::cerr << m_tilemap.getLevel() << "\n";
+
+	tileSet.clear();
+}
+
+void LevelLoader::BgTileMapSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture) {
+	GameObject tile;
+	std::vector<GameObject> tileSet;
+
+	// Set GameObject size (Scaling up 4x for visibility)
+	// 4 * 18 = 3 * 24 = 72 (dino size is 24).
+	tile.setSize(sf::Vector2f(tile_size * 9, tile_size * 9));
+	tile.setCollisionBox({ { 0,0 }, tile.getSize() });
+
+	for (int i = 0; i < num_columns * num_rows; i++)
+	{
+		int row = i / num_columns;
+		int col = i % num_columns;
+
+		tile.setTextureRect({
+			{(tile_size + sheet_spacing) * col, (tile_size + sheet_spacing) * row},
+			{tile_size, tile_size} });
+		if (col <= 4 || col >= 12) tile.setCollider(true);
+		else tile.setCollider(false);
+		tileSet.push_back(tile);
+	}
+
+	// Add Blank
+	tile.setTextureRect({ {0, 0}, {-24, -24} }); // Empty rect for blank
+	int b = tileSet.size();
+	tile.setCollider(false);
+	tileSet.push_back(tile);
+
+	//Get tileMap//
+	std::string a;
+	std::vector<int> tileMap;
+	std::ifstream data(tileMapData);
+	if (!data.is_open()) std::cerr << "Failed to open data \n";
+	int i = 0;
+	while (data >> a) {
+		if (a == "b") {
+			tileMap.push_back(b);
+		}
+		else {
+			int c = stoi(a);
+			tileMap.push_back(c);
+		}
+
+	};
+	data.close();
+	//__________//
+
+	m_bgtilemap.loadTexture(Texture);
+	m_bgtilemap.setTileSet(tileSet);
+	m_bgtilemap.setTileMap(tileMap, mapDimensions);
+	m_bgtilemap.setPosition({ 0, 0 });
+	m_bgtilemap.buildLevel();
+
+	tileSet.clear();
+}
+
+void LevelLoader::SetupGremlins(std::string filename) {
+	float x, y;
+	std::ifstream data(filename);
+	if (!data.is_open()) std::cerr << "Failed to open data \n";
+	int i = 0;
+	while (data >> x >> y) {
+		Gremlin grimlin;
+		grimlin.setPosition({ x, y });
+		m_grimlins.push_back(grimlin);
+	};
+	data.close();
+}
+
+GameObject LevelLoader::UI_Object(sf::Vector2f size, sf::Vector2f position, sf::Color color) {
+	GameObject UI_OBJECT;
+	UI_OBJECT.setSize(size);
+	UI_OBJECT.setPosition(position);
+	UI_OBJECT.setFillColor(color);
+	UI_OBJECT.setCollisionBox({ {0,-150}, UI_OBJECT.getSize() });
+	return UI_OBJECT;
+}
+
+sf::Text LevelLoader::UI_Text(int characterSize, sf::Vector2f position, std::string text, sf::Color color) {
+	sf::Text UI_TEXT(m_font);
+	UI_TEXT.setCharacterSize(characterSize);		// setup labels
+	UI_TEXT.setPosition(position);
+	UI_TEXT.setString(text);
+	UI_TEXT.setFillColor(color);
+	return UI_TEXT;
+}
+
+void LevelLoader::SetUpCheckPoints(std::string filename) {
+	std::ifstream data;
+	Checkpoints checkpoint;
+	float x, y;
+	while (data >> x >> y) {
+		checkpoint.setPosition({ x, y });
+		m_Checkpoints.push_back(checkpoint);
+	}
+
+}
+
 void LevelLoader::updateCameraAndBackground(sf::Vector2i WORLD_SIZE, sf::Vector2i VIEW_SIZE)
 {
 	auto view = m_window.getView();
@@ -357,22 +411,6 @@ void LevelLoader::updateCameraAndBackground(sf::Vector2i WORLD_SIZE, sf::Vector2
 	m_window.setView(view);
 
 	m_bgtilemap.setPosition({ player_pos.x - halfViewWidth, 0 });
-}
-
-
-void LevelLoader::drawUI() {
-
-	for (int i = 0;i < 3; i++) {
-		m_window.draw(m_lives[i]);
-	}
-
-	if (m_gameState.getCurrentState() == State::PAUSE) {
-		m_window.draw(m_PausePanel);
-		m_window.draw(m_resumeButton);
-		m_window.draw(m_resumeButtonLabel);
-		m_window.draw(m_menuButton);
-		m_window.draw(m_menuButtonLabel);
-	}
 }
 
 void LevelLoader::reset() {

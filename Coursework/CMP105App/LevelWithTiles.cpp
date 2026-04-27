@@ -3,6 +3,8 @@
 LevelWithTiles::LevelWithTiles(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio)
 	: Scene(window, input, gameState, audio), m_levelLoader(window, input, gameState, audio, m_player), m_alertText(m_font)
 {
+	m_levelLoader.setLevelState(State::LEVELONE);
+
 
 	//Setup tilemap and background
 	m_levelLoader.TileMapSetup( "data/Tilemap.txt", {40, 8}, 18, 20, 9, 1, "gfx/tilemap.png");

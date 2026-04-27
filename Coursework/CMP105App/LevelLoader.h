@@ -32,15 +32,15 @@ public:
     void BgTileMapSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture);
     void SetupGremlins(std::string filename);
 
-    void UI_Object(GameObject& Gameobject,sf::Vector2f size, sf::Vector2f position, sf::Color color);
-    void UI_Text(sf::Text& textObj, int characterSize, sf::Vector2f position, std::string text, sf::Color color);
+    GameObject UI_Object(sf::Vector2f size, sf::Vector2f position, sf::Color color);
+    sf::Text UI_Text( int characterSize, sf::Vector2f position, std::string text, sf::Color color);
 
     TileMap& getTileMap() { return m_tilemap; }
     TileMap& getBGTilemap() { return m_bgtilemap; }
 
     void updateCameraAndBackground(sf::Vector2i WORLD_SIZE, sf::Vector2i VIEW_SIZE);
 
-    
+    void setLevelState(State state) { m_stateLevel = state; };
 
 private:
     
@@ -57,13 +57,23 @@ private:
     TileMap m_bgtilemap;
     std::string m_tileMapData, m_bgtileMapData;
 
-    //Pause Menu
-    GameObject m_PausePanel;
+    //pause, gameover, win Menu
+    sf::Text m_maineText;
 
+    GameObject m_Panel;
+
+    GameObject m_restartButton;
+    sf::Text m_restartButtonLabel;
     GameObject m_resumeButton;
     sf::Text m_resumeButtonLabel;
     GameObject m_menuButton;
     sf::Text m_menuButtonLabel;
+
+    State m_stateLevel;
+
+    //Leader board
+
+
 
     //Player
     Player& m_player;
