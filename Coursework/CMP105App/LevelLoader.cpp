@@ -45,39 +45,40 @@ void LevelLoader::handleInput(float dt) {
 		m_gameState.setCurrentState(State::PAUSE);
 	if (m_gameState.getCurrentState() == State::PAUSE) {
 
-		sf::Vector2i mousePos = { m_input.getMouseX(), m_input.getMouseY() };
+		sf::Vector2i pos = { m_input.getMouseX(), m_input.getMouseY() };
+		sf::Vector2f mousePos = m_window.mapPixelToCoords(pos);
 		
-		if (m_input.isLeftMousePressed() && Collision::checkBoundingBox(m_resumeButton, mousePos))
+		if (m_input.isLeftMousePressed() && m_resumeButton.getCollisionBox().contains(mousePos))
 		{
 			m_gameState.setCurrentState(m_stateLevel);
 		}
 
-		if (m_input.isLeftMousePressed() && Collision::checkBoundingBox(m_restartButton, mousePos))
+		if (m_input.isLeftMousePressed() && m_restartButton.getCollisionBox().contains(mousePos))
 		{
 			m_gameState.setCurrentState(m_stateLevel);
 			reset();
 				
 		}
 
-		if (m_input.isLeftMousePressed() && Collision::checkBoundingBox(m_menuButton, mousePos))
+		if (m_input.isLeftMousePressed() && m_menuButton.getCollisionBox().contains(mousePos))
 		{
 			reset();
 			m_gameState.setCurrentState(State::MENU);
 		}
 
-		if (Collision::checkBoundingBox(m_resumeButton, mousePos))
+		if (m_resumeButton.getCollisionBox().contains(mousePos))
 		{
 			m_resumeButton.setFillColor(sf::Color::Red);
 		}
 		else { m_resumeButton.setFillColor(m_defaultButtonColour); }
 
-		if (Collision::checkBoundingBox(m_restartButton, mousePos))
+		if (m_restartButton.getCollisionBox().contains(mousePos))
 		{
 			m_restartButton.setFillColor(sf::Color::Red);
 		}
 		else { m_restartButton.setFillColor(m_defaultButtonColour); }
 
-		if (Collision::checkBoundingBox(m_menuButton, mousePos))
+		if (m_menuButton.getCollisionBox().contains(mousePos))
 		{
 			m_menuButton.setFillColor(sf::Color::Red);
 		}
@@ -167,12 +168,11 @@ void LevelLoader::update(float dt) {
 	}
 
 	//Lives and pause menu move with screen
-	sf::Vector2f pos = m_player.getPosition();
+	auto view = m_window.getView().getCenter();
 
-	m_Panel.setPosition({ m_Panel.getPosition().x + pos.x, m_Panel.getPosition().x + pos.x });
+	m_Panel.setPosition({ m_Panel.getPosition().x + view.x, m_Panel.getPosition().x + view.x });
 
 	m_resumeButton.setPosition({ view.x + 54, view.y +108  });
-	m_resumeButton.setCollisionBox({ m_resumeButton.getPosition(), m_resumeButton.getSize() });
 	m_resumeButtonLabel.setPosition({ m_resumeButton.getPosition().x + 10, m_resumeButton.getPosition().y + 10});
 
 	m_restartButton.setPosition({ view.x + 54, view.y });
@@ -372,7 +372,7 @@ GameObject LevelLoader::UI_Object(sf::Vector2f size, sf::Vector2f position, sf::
 	UI_OBJECT.setSize(size);
 	UI_OBJECT.setPosition(position);
 	UI_OBJECT.setFillColor(color);
-	UI_OBJECT.setCollisionBox({ {0,-150}, UI_OBJECT.getSize() });
+	UI_OBJECT.setCollisionBox({ {0,0}, UI_OBJECT.getSize() });
 	return UI_OBJECT;
 }
 
