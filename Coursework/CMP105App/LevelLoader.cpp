@@ -1,6 +1,6 @@
 #include "LevelLoader.h"
 
-LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio, Player& player) :BaseLevel(window, input, gameState, audio), m_player(player), m_resumeButtonLabel(m_font), m_menuButtonLabel(m_font), m_maineText(m_font), m_restartButtonLabel(m_font) {
+LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio, Player& player) :BaseLevel(window, input, gameState, audio), m_player(player), m_resumeButtonLabel(m_font), m_menuButtonLabel(m_font), m_maineText(m_font), m_restartButtonLabel(m_font), m_timerText(m_font) {
 
 
 	if (!m_font.openFromFile("font/bitcount.ttf")) std::cerr << "no font found";
@@ -34,57 +34,43 @@ LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& game
 
 	m_isSpannerActive = false;
 
-	
-	if (m_stateLevel == State::LEVELONE) {
-		std::cerr << "Level one\n";
-	}
+	m_timerText = UI_Text(24, { 0, 0 }, "", sf::Color::White);
 }
 
 void LevelLoader::handleInput(float dt) {
 	if (m_input.isPressed(sf::Keyboard::Scancode::Escape))
 		m_gameState.setCurrentState(State::PAUSE);
-	if (m_gameState.getCurrentState() == State::PAUSE) {
+	if (m_gameState.getCurrentState() == State::PAUSE || m_gameState.getCurrentState() == State::GAMEOVER || m_gameState.getCurrentState() == State::WIN) {
 
 		sf::Vector2i pos = { m_input.getMouseX(), m_input.getMouseY() };
 		sf::Vector2f mousePos = m_window.mapPixelToCoords(pos);
-		
-		if (m_input.isLeftMousePressed() && m_resumeButton.getCollisionBox().contains(mousePos))
-		{
-			m_gameState.setCurrentState(m_stateLevel);
+		if (m_gameState.getCurrentState() == State::PAUSE) {
+			if (m_input.isLeftMousePressed() && m_resumeButton.getCollisionBox().contains(mousePos))m_gameState.setCurrentState(m_stateLevel);
+			if (m_resumeButton.getCollisionBox().contains(mousePos))m_resumeButton.setFillColor(sf::Color::Red);
+			else { m_resumeButton.setFillColor(m_defaultButtonColour); }
 		}
 
 		if (m_input.isLeftMousePressed() && m_restartButton.getCollisionBox().contains(mousePos))
 		{
 			m_gameState.setCurrentState(m_stateLevel);
 			reset();
-				
 		}
+		if (m_restartButton.getCollisionBox().contains(mousePos))m_restartButton.setFillColor(sf::Color::Red);
+		else { m_restartButton.setFillColor(m_defaultButtonColour); }
 
 		if (m_input.isLeftMousePressed() && m_menuButton.getCollisionBox().contains(mousePos))
 		{
-			reset();
 			m_gameState.setCurrentState(State::MENU);
+			reset();
 		}
 
-		if (m_resumeButton.getCollisionBox().contains(mousePos))
-		{
-			m_resumeButton.setFillColor(sf::Color::Red);
-		}
-		else { m_resumeButton.setFillColor(m_defaultButtonColour); }
-
-		if (m_restartButton.getCollisionBox().contains(mousePos))
-		{
-			m_restartButton.setFillColor(sf::Color::Red);
-		}
-		else { m_restartButton.setFillColor(m_defaultButtonColour); }
-
-		if (m_menuButton.getCollisionBox().contains(mousePos))
-		{
-			m_menuButton.setFillColor(sf::Color::Red);
-		}
+		if (m_menuButton.getCollisionBox().contains(mousePos))m_menuButton.setFillColor(sf::Color::Red);
 		else { m_menuButton.setFillColor(m_defaultButtonColour); }
 		return;
 	}
+
+	
+	m_player.handleInput(dt);
 
 	//throw spaner
 	if (!m_isSpannerActive && m_input.isKeyDown(sf::Keyboard::Scancode::R)) {
@@ -95,27 +81,27 @@ void LevelLoader::handleInput(float dt) {
 		m_timerCoulDownSpaner = m_coulDownSpaner;
 		m_spanners.push_back(spaner);
 	}
-	//Pause buttons
-	if (m_gameState.getCurrentState() != State::PAUSE) return;
-
+	
 }
 
 void LevelLoader::update(float dt) {
+	if (m_gameState.getCurrentState() != State::PAUSE && m_gameState.getCurrentState() != State::GAMEOVER) {
+		m_isTimer = true;
+	}
+
+	if (m_isTimer) 
+	{ 
+		m_timer += dt;
+		m_timerText.setString("Time: " + formattedTime(m_timer));
+	}
+
+	if (m_player.getLives() <= 0)m_gameState.setCurrentState(State::GAMEOVER);
 	// reset if fallen too far
 	if (m_player.getPosition().y > 1200)
 	{
 		m_player.restart();
 		m_audio.playSoundbyName("death");
-	}
 
-
-	if (m_player.getLives() <= 0) { 
-		m_gameState.setCurrentState(State::MENU); 
-		for (auto& checkpoint : m_Checkpoints) {
-			checkpoint.setIsActive(false);
-		}
-
-		reset();
 	}
 
 	//update Spanner
@@ -170,22 +156,24 @@ void LevelLoader::update(float dt) {
 	//Lives and pause menu move with screen
 	auto view = m_window.getView().getCenter();
 
-	m_Panel.setPosition({ m_Panel.getPosition().x + view.x, m_Panel.getPosition().x + view.x });
+	m_Panel.setPosition({ view.x - 216, view.y - 216 });
 
-	m_resumeButton.setPosition({ view.x + 54, view.y +108  });
-	m_resumeButtonLabel.setPosition({ m_resumeButton.getPosition().x + 10, m_resumeButton.getPosition().y + 10});
+	m_maineText.setPosition({ 0, 180 });
+
+	m_resumeButton.setPosition({ view.x + 54, view.y + 108 });
+	m_resumeButtonLabel.setPosition({ m_resumeButton.getPosition().x + 10, m_resumeButton.getPosition().y + 10 });
 
 	m_restartButton.setPosition({ view.x + 54, view.y });
 	m_restartButtonLabel.setPosition({ m_menuButton.getPosition().x + 20, m_menuButton.getPosition().y + 10 });
 
-	m_menuButton.setPosition({ view.x + 54, view.y - 108});
+	m_menuButton.setPosition({ view.x + 54, view.y - 108 });
 	m_menuButtonLabel.setPosition({ m_menuButton.getPosition().x + 20, m_menuButton.getPosition().y + 10 });
 
-
+	m_timerText.setPosition({ view.x + 50, view.y - 180 });
 
 	for (int i = 0; i < 3; i++) {
-		m_lives[i].setPosition({ view.x - 200 + i*60, view.y - 200 });
-		
+		m_lives[i].setPosition({ view.x - 200 + i * 60, view.y - 200 });
+
 		if (i < m_player.getLives()) {
 			m_lives[i].setFillColor(sf::Color::Red);
 		}
@@ -197,6 +185,15 @@ void LevelLoader::update(float dt) {
 	for (int i = 0; i < m_Checkpoints.size();i++) {
 		m_Checkpoints[i].update(m_player);
 	}
+
+	if (m_player.getGameEndTriggered()) {
+		m_isTimer = false;
+		m_leaderboard.addScore(m_timer);
+		m_leaderboard.saveToFile("data/Level1_Leaderboard.txt");
+
+		m_gameState.setCurrentState(State::WIN);
+	}
+	
 }
 
 void LevelLoader::render() {
@@ -225,11 +222,15 @@ void LevelLoader::drawUI() {
 		m_window.draw(m_lives[i]);
 	}
 
-	if (m_gameState.getCurrentState() == State::PAUSE) {
+	m_window.draw(m_timerText);
+
+	if (m_gameState.getCurrentState() == State::PAUSE || m_gameState.getCurrentState() == State::GAMEOVER || m_gameState.getCurrentState() == State::WIN) {
 		m_window.draw(m_Panel);
 
-		m_window.draw(m_resumeButton);
-		m_window.draw(m_resumeButtonLabel);
+		if (m_gameState.getCurrentState() == State::PAUSE) {
+			m_window.draw(m_resumeButton);
+			m_window.draw(m_resumeButtonLabel);
+		}
 
 		m_window.draw(m_restartButton);
 		m_window.draw(m_restartButtonLabel);
@@ -237,6 +238,15 @@ void LevelLoader::drawUI() {
 		m_window.draw(m_menuButton);
 		m_window.draw(m_menuButtonLabel);
 	}
+}
+
+std::string LevelLoader::formattedTime(float& time) {
+	int totalSeconds = (int)time;
+	int minutes = totalSeconds / 60 * 100;
+	int seconds = totalSeconds % 60;
+	int milliseconds = (int)((time - totalSeconds) * 100);
+	std::string text = std::to_string(minutes) + ":" + (seconds < 10 ? "0" : "") + std::to_string(seconds) + ":" + (milliseconds < 10 ? "0" : "") + std::to_string(milliseconds);
+	return text;
 }
 
 void LevelLoader::TileMapSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture) {
@@ -424,6 +434,7 @@ void LevelLoader::reset() {
 	m_spanners.clear();
 	m_isSpannerActive = false;
 	m_timerCoulDownSpaner = 0.f;
+	m_isTimer = false;
 
 	for (auto& checkpoint : m_Checkpoints) {
 		checkpoint.setIsActive(false);

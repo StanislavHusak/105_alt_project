@@ -11,6 +11,7 @@
 #include <fstream>
 #include "Spanner.h"
 #include "Gremlin.h"
+#include "Leaderboard.h"
 
 class LevelLoader : public BaseLevel
 {
@@ -42,9 +43,17 @@ public:
 
     void setLevelState(State state) { m_stateLevel = state; };
 
-private:
-    
+    std::string formattedTime(float& time);
 
+private:
+    //Timer and leaderboard
+    float m_timer = 0.f;
+    bool m_isTimer;
+
+    Leaderboard m_leaderboard;
+
+    sf::Text m_timerText;
+    
 
     sf::Font m_font;
     sf::Color m_defaultButtonColour = sf::Color::White ;

@@ -121,7 +121,7 @@ int main()
 		if (deltaTime > 0.1f) deltaTime = 0.1f; // Clamp delta time to avoid large jumps
 
 		State requestedState = gameState.getCurrentState();
-		if (requestedState != State::PAUSE && sceneRegistry[requestedState] != currentScene)
+		if (requestedState != State::PAUSE && requestedState != State::GAMEOVER && requestedState != State::WIN && sceneRegistry[requestedState] != currentScene)
 		{
 			currentScene->onEnd();
 			currentScene = sceneRegistry[requestedState];

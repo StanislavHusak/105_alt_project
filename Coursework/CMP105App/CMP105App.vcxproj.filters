@@ -87,6 +87,12 @@
     <ClCompile Include="Spanner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Gremlin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Leaderboard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\Animation.h">
@@ -150,6 +156,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Spanner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Gremlin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Leaderboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

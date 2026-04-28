@@ -47,12 +47,15 @@ LevelWithTiles::LevelWithTiles(sf::RenderWindow& window, Input& input, GameState
 
 void LevelWithTiles::handleInput(float dt)
 {
-	m_player.handleInput(dt);
 	m_levelLoader.handleInput(dt);
+	
+	
 }
 
 void LevelWithTiles::update(float dt)
 {
+	if (m_gameState.getCurrentState() == State::PAUSE || m_gameState.getCurrentState() == State::GAMEOVER || m_gameState.getCurrentState() == State::WIN) return;
+
 	m_levelLoader.update(dt);
 
 	if (m_flagLeverPulled)
@@ -80,12 +83,6 @@ void LevelWithTiles::update(float dt)
 		// turn off prompt
 		m_alertText.setString("");
 	}
-	/*else if (m_player.getPosition().y > WORLD_SIZE.y)
-	{
-		m_alertText.setCharacterSize(24);
-		m_alertText.setPosition(m_window.getView().getCenter());
-		m_alertText.setString("Press R to reset");
-	}*/
 	// show text if the player in lever range
 	else if (m_player.inLeverRange())
 	{
@@ -112,15 +109,9 @@ void LevelWithTiles::update(float dt)
 		m_flagLeverPulled = true;
 		m_lever.setUsed(true);
 	}
-	else
-	{
+	else 
 		m_lever.setUsed(false);
-	}
-	if (m_player.getGameEndTriggered())
-	{
-		
-		m_gameState.setCurrentState(State::MENU);
-	}
+	
 
 
 
