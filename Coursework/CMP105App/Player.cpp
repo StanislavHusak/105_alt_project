@@ -188,6 +188,7 @@ void Player::restart()
 	m_gameEndTriggered = false;
 	
 	m_lives -= 1;
+	m_audio->playSoundbyName("death");
 }
 void Player::reset() {
 	setPosition({ 0, 50 });

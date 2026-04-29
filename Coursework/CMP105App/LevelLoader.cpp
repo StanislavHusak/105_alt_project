@@ -5,6 +5,7 @@ LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& game
 
 	if (!m_font.openFromFile("font/bitcount.ttf")) std::cerr << "no font found";
 	/////SETUP (PAUSE GAMEOVER WIN) MENU//////
+	// 
 	//setup text 
 	m_resumeButtonLabel = UI_Text( 24, { 135, 243 }, "Resume", sf::Color::Black);
 	m_menuButtonLabel = UI_Text(24, { 350, 243 }, "Menu", sf::Color::Black);
@@ -17,13 +18,15 @@ LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& game
 
 	//Setup panel
 	m_Panel = UI_Object({ 432, 432 }, {0, 0 }, sf::Color::Yellow);
-
+	m_maineText = UI_Text(34, { 0,0 }, "Pause", sf::Color::Black);
 	//Setup leader board
 	m_leaderboardPanel = UI_Object({250, 300}, {0, 0}, sf::Color::White);
 	m_leaderboardText = UI_Text(24, { 135, 243 }, "", sf::Color::Black);
+
 	/////////////////////////////////////////////
 
 	/////SETUP USERINTERFACE IN LEVEL////////////
+	
 	//Setup UI  3 Lives
 	for (int i = 0; i < 3; i++) {
 		GameObject live;
@@ -35,6 +38,7 @@ LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& game
 
 	m_TimerPanel = UI_Object({ 200, 50 }, { 0, 0 }, sf::Color::Black);
 	m_timerText = UI_Text(24, { 0, 0 }, "", sf::Color::White);
+
 	/////////////////////////////////////////////
 	
 
@@ -44,13 +48,16 @@ LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& game
 void LevelLoader::handleInput(float dt) {
 
 	////// PAUSE MENU IN LEVELS/////////////////
+
 	if (m_input.isPressed(sf::Keyboard::Scancode::Escape) && m_gameState.getCurrentState() != State::PAUSE) {
 		m_gameState.setCurrentState(State::PAUSE);
 		m_leaderboardText.setString(m_leaderboard.makeLeaderboard(m_fileLeaderBoard));
 	}
+
 	////////////////////////////////////////////
 
 	/////// TURN ON ONLY PAUSE GAMEOVER WIN MENU AND OTHER BUTTON FREEZ/////////////
+
 	if (m_gameState.getCurrentState() == State::PAUSE || m_gameState.getCurrentState() == State::GAMEOVER || m_gameState.getCurrentState() == State::WIN) {
 
 		sf::Vector2i pos = { m_input.getMouseX(), m_input.getMouseY() };
@@ -79,11 +86,13 @@ void LevelLoader::handleInput(float dt) {
 		else { m_menuButton.setFillColor(m_defaultButtonColour); }
 		return;
 	}
+
 	///////////////////////////////////////////////////////////////////////
 	
 	m_player.handleInput(dt);
 
 	//////// TROWING SPANNER WHEN PLAYR CLICK "R"////////////////////////
+
 	if (!m_isSpannerActive && m_input.isKeyDown(sf::Keyboard::Scancode::R)) {
 		Spanner spaner;
 		spaner.setPosition(m_player.getPosition());
@@ -92,11 +101,12 @@ void LevelLoader::handleInput(float dt) {
 		m_timerCoulDownSpaner = m_coulDownSpaner;
 		m_spanners.push_back(spaner);
 	}
+
 	///////////////////////////////////////////////////////////////////////
 }
 
 void LevelLoader::update(float dt) {
-	
+
 	if (m_gameState.getCurrentState() == State::PAUSE || m_gameState.getCurrentState() == State::GAMEOVER || m_gameState.getCurrentState() == State::WIN) return;
 
 	m_player.update(dt);
@@ -105,30 +115,35 @@ void LevelLoader::update(float dt) {
 		m_isTimer = true;
 	}
 
+
 	/////////// WHEN ISTIME ON TIMER IN LEVEL WORKING///////
-	if (m_isTimer) 
-	{ 
+
+	if (m_isTimer)
+	{
 		m_timer += dt;
 		m_timerText.setString("Time: " + m_leaderboard.formattedTime(m_timer));
 	}
+
 	////////////////////////////////////////////////////////
 
 	/////////// WHEN PLAYER DO NOT HAVE HEART SHOW GAMEOVER MENU AND SHOW LEADERBOARD////////////
-	if (m_player.getLives() <= 0) { 
+
+	if (m_player.getLives() <= 0) {
 		m_gameState.setCurrentState(State::GAMEOVER);
 		m_leaderboardText.setString(m_leaderboard.makeLeaderboard((m_fileLeaderBoard)));
 	}
 	////////////////////////////////////////////////////////////////////////////////////
 
+
 	//////RESET IF FALLEN TOO FAR/////////
+
 	if (m_player.getPosition().y > 1200)
 	{
 		m_player.restart();
-		m_audio.playSoundbyName("death");
 
 	}
 	////////////////////////////////////
- 
+
 	//update Spanner
 	for (auto& spanner : m_spanners) {
 		if (spanner.isAlive()) {
@@ -137,6 +152,7 @@ void LevelLoader::update(float dt) {
 	}
 
 	////////COULDOWN THROW SPANNER ///////////
+
 	if (m_isSpannerActive) {
 		if (m_timerCoulDownSpaner <= 0) {
 			m_isSpannerActive = false;
@@ -147,25 +163,29 @@ void LevelLoader::update(float dt) {
 		}
 	}
 	///////////////////////////////////////////
-	
+
 	////////////////////////////////////////////////////COLLISION /////////////////////////////////////////////////////
+
 	std::vector<GameObject>& level = *m_tilemap.getLevel();
-	for (auto & t : level) {
+	for (auto& t : level) {
 		/////CHECK IF PLAYER TOUCHE GROUND////////
+
 		if (t.isCollider() && Collision::checkBoundingBox(m_player, t))
 		{
 			m_player.collisionResponse(t);
 		}
 
-		
+
 		for (auto& spanner : m_spanners)
 		{
 			//////////COLISION SPANER WITH GROUND//////////////
+
 			if (t.isCollider() && Collision::checkBoundingBox(spanner, t))
 			{
 				spanner.setAlive(false);
 			}
 			/////////COLLISION SPANER WITH GRIMLIN/////////////
+
 			for (auto& grimlin : m_grimlins) {
 				if (spanner.isAlive()) {
 					if (grimlin.isAlive() && Collision::checkBoundingBox(spanner, grimlin)) {
@@ -177,8 +197,9 @@ void LevelLoader::update(float dt) {
 			}
 		}
 		///////////////////GRIMLIN COLLISION WITH PLAYER/////////////////
+
 		for (auto& grimlin : m_grimlins) {
-			
+
 			if (grimlin.isAlive() && Collision::checkBoundingBox(grimlin, m_player)) {
 				m_player.restart();
 			}
@@ -188,11 +209,12 @@ void LevelLoader::update(float dt) {
 
 
 	////////////////////////////UPDATE POSITION UI INTERFACE////////////////////////
+
 	auto view = m_window.getView().getCenter();
 
 	m_Panel.setPosition({ view.x - 216, view.y - 216 });
 
-	m_maineText.setPosition({ 0, 200});
+	m_maineText.setPosition({view.x-54, view.y - 216});
 
 	m_leaderboardPanel.setPosition({ view.x - 200, view.y - 100 });
 	m_leaderboardText.setPosition({ m_leaderboardPanel.getPosition().x + 20, m_leaderboardPanel.getPosition().y + 20 });
@@ -213,6 +235,7 @@ void LevelLoader::update(float dt) {
 		m_lives[i].setPosition({ view.x - 200 + i * 60, view.y - 200 });
 
 		////////IF PLAYER LOSE HEART AND HEART CHENGE COLOR 
+
 		if (i < m_player.getLives()) {
 			m_lives[i].setFillColor(sf::Color::Red);
 		}
@@ -235,6 +258,21 @@ void LevelLoader::update(float dt) {
 		m_leaderboardText.setString(m_leaderboard.makeLeaderboard(m_fileLeaderBoard));
 
 		m_gameState.setCurrentState(State::WIN);
+	}
+
+	switch (m_gameState.getCurrentState())
+	{
+	case State::PAUSE:
+		m_maineText.setString("Pause");
+		break;
+	case State::GAMEOVER:
+		m_maineText.setString("Game Over");
+		break;
+	case State::WIN:
+		m_maineText.setString("Level Complete!");
+		break;
+	default:
+		break;
 	}
 	
 }
