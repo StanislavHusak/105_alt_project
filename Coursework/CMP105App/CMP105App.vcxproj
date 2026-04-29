@@ -198,6 +198,7 @@ sfml-network.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="Gremlin.cpp" />
     <ClCompile Include="Leaderboard.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
+    <ClCompile Include="LevelThree.cpp" />
     <ClCompile Include="LevelTwoWithTiles.cpp" />
     <ClCompile Include="LevelWithTiles.cpp" />
     <ClCompile Include="Lever.cpp" />
@@ -224,6 +225,7 @@ sfml-network.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="Gremlin.h" />
     <ClInclude Include="Leaderboard.h" />
     <ClInclude Include="LevelLoader.h" />
+    <ClInclude Include="LevelThree.h" />
     <ClInclude Include="LevelTwoWithTiles.h" />
     <ClInclude Include="LevelWithTiles.h" />
     <ClInclude Include="Lever.h" />

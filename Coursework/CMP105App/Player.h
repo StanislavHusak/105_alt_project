@@ -22,6 +22,7 @@ public:
     bool inEndRange();
     bool getLeverPulled() { return m_leverPulled; };
     bool getGameEndTriggered() { return m_gameEndTriggered; };
+    void setGameEndTriggered(bool is) { m_gameEndTriggered = is; };
     void reset();
     void restart();
     void setCanDoubleJump(bool value) { m_canDoubleJump = value; };
@@ -58,13 +59,13 @@ private:
 
     const float SPRINT_COOLDOWN = 2.0f;
     const float SPRINT_SPEED_MULT = 2.5f;
-    const float SPEED = 10.0f;
+    const float SPEED = 5.0f;
     const float GRAVITY = 50.0f;
     const float COEFF_OF_REST = 0.8f;
     const float DRAG_FACTOR = 0.9f;
     const float AIR_DRAG_FACTOR = 0.99f;
     const float TURN_DRAG = 0.6f;       // allow snappy decel for turning
-    const float JUMP_FORCE = 20.0f;
+    const float JUMP_FORCE = 18.0f;
     const float SPRINT_ANIM_THRESHOLD = 1.2f * SPEED;
     const float ACTIVATE_RANGE_SQUARED = 700.0f;
     const int FULL_LIVES = 3;

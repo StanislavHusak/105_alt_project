@@ -4,6 +4,7 @@ LevelWithTiles::LevelWithTiles(sf::RenderWindow& window, Input& input, GameState
 	: Scene(window, input, gameState, audio), m_levelLoader(window, input, gameState, audio, m_player), m_alertText(m_font)
 {
 	m_levelLoader.setLevelState(State::LEVELONE);
+	m_levelLoader.setLeaderboard("data/Level1_leaderboard.txt");
 
 
 	//Setup tilemap and background
@@ -54,7 +55,6 @@ void LevelWithTiles::handleInput(float dt)
 
 void LevelWithTiles::update(float dt)
 {
-	if (m_gameState.getCurrentState() == State::PAUSE || m_gameState.getCurrentState() == State::GAMEOVER || m_gameState.getCurrentState() == State::WIN) return;
 
 	m_levelLoader.update(dt);
 
@@ -63,17 +63,9 @@ void LevelWithTiles::update(float dt)
 		for (auto& flag : m_flags) flag->update(dt);
 	}
 	m_lever.update(dt);
-	m_player.update(dt);
 
 
-	std::vector<GameObject>& level = *m_levelLoader.getTileMap().getLevel();
-	for (auto& t : level)
-	{
-		if (t.isCollider() && Collision::checkBoundingBox(m_player, t))
-		{
-			m_player.collisionResponse(t);
-		}
-	}
+	
 	
 	// show text if player has dropped very low down
 	if (m_promptTimer > 0)

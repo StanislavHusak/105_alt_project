@@ -28,7 +28,6 @@ public:
     void SetUpLivesInScene();
     void SetUpCheckPoints(std::string filename);
 
-    
     void TileMapSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture);
     void BgTileMapSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture);
     void SetupGremlins(std::string filename);
@@ -43,7 +42,7 @@ public:
 
     void setLevelState(State state) { m_stateLevel = state; };
 
-    
+    void setLeaderboard(std::string filename) { m_fileLeaderBoard = filename; };
 
 private:
     //Timer and leaderboard
@@ -55,6 +54,7 @@ private:
     sf::Text m_timerText;
     sf::Text m_leaderboardText;
     GameObject m_leaderboardPanel;
+    std::string m_fileLeaderBoard;
 
     sf::Font m_font;
     sf::Color m_defaultButtonColour = sf::Color::White ;
@@ -81,12 +81,10 @@ private:
 
     State m_stateLevel;
 
-    //Leader board
-
-
-
     //Player
     Player& m_player;
+
+    sf::Texture m_tileTexture;
 
     //Spanner
     std::vector<Spanner> m_spanners;

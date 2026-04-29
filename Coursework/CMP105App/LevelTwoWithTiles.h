@@ -7,6 +7,7 @@
 #include "Flag.h"
 #include <algorithm> // for clamp
 #include "Spanner.h"
+#include "LevelLoader.h"
 
 
 class LevelTwoWithTiles :
@@ -22,6 +23,8 @@ public:
     void onEnd() override;
 
 private:
+    LevelLoader m_levelLoader;
+
     void updateCameraAndBackground();
     void checkAndSetMessages();
 
@@ -34,7 +37,7 @@ private:
     GameObject m_boopBlock;
     Flag m_flag;
 
-    const sf::Vector2i WORLD_SIZE = { 2880, 648 };
+    const sf::Vector2i WORLD_SIZE = { 5000, 648 };
     const sf::Vector2i VIEW_SIZE = { 432, 432 };
 
     sf::Text m_alertText;

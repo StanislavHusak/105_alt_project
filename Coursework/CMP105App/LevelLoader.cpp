@@ -36,12 +36,14 @@ LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& game
 	m_isSpannerActive = false;
 
 	m_timerText = UI_Text(24, { 0, 0 }, "", sf::Color::White);
+
+	if (!m_tileTexture.loadFromFile("gfx/tilemap.png")) std::cerr << "failed to find tile images";
 }
 
 void LevelLoader::handleInput(float dt) {
 	if (m_input.isPressed(sf::Keyboard::Scancode::Escape) && m_gameState.getCurrentState() != State::PAUSE) {
 		m_gameState.setCurrentState(State::PAUSE);
-		m_leaderboardText.setString(m_leaderboard.makeLeaderboard("data/Level1_Leaderboard.txt"));
+		m_leaderboardText.setString(m_leaderboard.makeLeaderboard(m_fileLeaderBoard));
 	}
 	if (m_gameState.getCurrentState() == State::PAUSE || m_gameState.getCurrentState() == State::GAMEOVER || m_gameState.getCurrentState() == State::WIN) {
 
@@ -88,6 +90,9 @@ void LevelLoader::handleInput(float dt) {
 }
 
 void LevelLoader::update(float dt) {
+	if (m_gameState.getCurrentState() == State::PAUSE || m_gameState.getCurrentState() == State::GAMEOVER || m_gameState.getCurrentState() == State::WIN) return;
+
+	m_player.update(dt);
 
 	if (m_gameState.getCurrentState() != State::PAUSE && m_gameState.getCurrentState() != State::GAMEOVER) {
 		m_isTimer = true;
@@ -101,7 +106,7 @@ void LevelLoader::update(float dt) {
 
 	if (m_player.getLives() <= 0) { 
 		m_gameState.setCurrentState(State::GAMEOVER);
-		m_leaderboardText.setString(m_leaderboard.makeLeaderboard("data/Level1_Leaderboard.txt"));
+		m_leaderboardText.setString(m_leaderboard.makeLeaderboard((m_fileLeaderBoard)));
 	}
 	// reset if fallen too far
 	if (m_player.getPosition().y > 1200)
@@ -131,34 +136,36 @@ void LevelLoader::update(float dt) {
 
 	//Collision
 	std::vector<GameObject>& level = *m_tilemap.getLevel();
-	for (auto& spanner : m_spanners) {
-		for (auto& t : level)
+	for (auto & t : level) {
+		if (t.isCollider() && Collision::checkBoundingBox(m_player, t))
 		{
-			if (t.isCollider() && Collision::checkBoundingBox(m_player, t))
-			{
-				m_player.collisionResponse(t);
-			}
-
-
+			m_player.collisionResponse(t);
+		}
+		for (auto& spanner : m_spanners)
+		{
 			if (t.isCollider() && Collision::checkBoundingBox(spanner, t))
 			{
 				spanner.setAlive(false);
-
+			}
+			for (auto& grimlin : m_grimlins) {
+				if (spanner.isAlive()) {
+					if (grimlin.isAlive() && Collision::checkBoundingBox(spanner, grimlin)) {
+						spanner.setAlive(false);
+						grimlin.setAlive(false);
+						grimlin.setCollider(false);
+					}
+				}
 			}
 		}
 		for (auto& grimlin : m_grimlins) {
-			if (spanner.isAlive()) {
-				if (grimlin.isAlive() && Collision::checkBoundingBox(spanner, grimlin)) {
-					spanner.setAlive(false);
-					grimlin.setAlive(false);
-					grimlin.setCollider(false);
-				}
-				if (Collision::checkBoundingBox(grimlin, m_player)) {
-					//m_player.restart();
-				}
+			
+			if (Collision::checkBoundingBox(grimlin, m_player)) {
+				//m_player.restart();
 			}
 		}
 	}
+
+
 
 	//Lives and pause menu move with screen
 	auto view = m_window.getView().getCenter();
@@ -199,9 +206,9 @@ void LevelLoader::update(float dt) {
 	if (m_player.getGameEndTriggered()) {
 		m_isTimer = false;
 		m_leaderboard.addScore(m_timer);
-		m_leaderboard.saveToFile("data/Level1_Leaderboard.txt");
+		m_leaderboard.saveToFile(m_fileLeaderBoard);
 
-		m_leaderboardText.setString(m_leaderboard.makeLeaderboard("data/Level1_Leaderboard.txt"));
+		m_leaderboardText.setString(m_leaderboard.makeLeaderboard(m_fileLeaderBoard));
 
 		m_gameState.setCurrentState(State::WIN);
 	}
@@ -443,6 +450,7 @@ void LevelLoader::reset() {
 	m_isSpannerActive = false;
 	m_timerCoulDownSpaner = 0.f;
 	m_isTimer = false;
+	m_timer = 0.f;
 
 	for (auto& checkpoint : m_Checkpoints) {
 		checkpoint.setIsActive(false);
