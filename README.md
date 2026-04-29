@@ -72,4 +72,4 @@ Dino Handyman: Spanner in the Works is a 2D platformer where the player controls
 
 * Large levels more complex multi-screen environments designed to extend playtime, expand exploration and support multiple playthroughs. Rather than short, linear levels, these levels are structured as interconnected sections featuring checkpoints, verticality and optional routes.
 
-*Difficulty levels (easy/normal/hard)
+* Difficulty levels (easy/normal/hard)
