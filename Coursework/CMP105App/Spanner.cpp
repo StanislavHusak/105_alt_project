@@ -13,16 +13,25 @@ Spanner::Spanner() {
 
 	m_isAllive = true;
 }
-Spanner::~Spanner() {
 
-}
-
+/// <summary>
+///	Updates the spanner's movement using simple physics.
+/// Applies acceleration (gravity) and moves the object each frame.
+/// </summary>
+/// <param name="dt"></param>
 void Spanner::update(float dt) {
 	m_velocity += m_acce * dt;
 	move(m_velocity * dt);
-	
 }
 
+/// <summary>
+/// Initializes the spanner's velocity when thrown by the player.
+/// Determines direction (left/right) and applies an upward force.
+/// </summary>
+/// <param name="isRight">
+/// True = throw to the right ,
+/// False = throw to the left
+/// </param>
 void Spanner::Throwing(bool isRight) {
 
 	if (isRight) {

@@ -32,7 +32,9 @@ public:
     void BgTileMapSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture);
     void SetupGremlins(std::string filename);
 
+    //function for creating new objects
     GameObject UI_Object(sf::Vector2f size, sf::Vector2f position, sf::Color color);
+    //function for creating new text
     sf::Text UI_Text( int characterSize, sf::Vector2f position, std::string text, sf::Color color);
 
     TileMap& getTileMap() { return m_tilemap; }
@@ -49,7 +51,7 @@ public:
     };
     void setFlagPuled(bool is) { m_flagLeverPulled = is; };
 private:
-    //Timer and leaderboard
+    //Timer and leaderboard//
     float m_timer = 0.f;
     bool m_isTimer;
 
@@ -59,6 +61,7 @@ private:
     sf::Text m_leaderboardText;
     GameObject m_leaderboardPanel;
     std::string m_fileLeaderBoard;
+    ////-----------------------////
 
     sf::Font m_font;
     sf::Color m_defaultButtonColour = sf::Color::White ;
