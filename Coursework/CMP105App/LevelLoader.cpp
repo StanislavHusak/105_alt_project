@@ -1,6 +1,6 @@
 #include "LevelLoader.h"
 
-LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio, Player& player) :BaseLevel(window, input, gameState, audio), m_player(player), m_resumeButtonLabel(m_font), m_menuButtonLabel(m_font), m_maineText(m_font), m_restartButtonLabel(m_font), m_timerText(m_font) {
+LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio, Player& player) :BaseLevel(window, input, gameState, audio), m_player(player), m_resumeButtonLabel(m_font), m_menuButtonLabel(m_font), m_maineText(m_font), m_restartButtonLabel(m_font), m_timerText(m_font), m_leaderboardText(m_font) {
 
 
 	if (!m_font.openFromFile("font/bitcount.ttf")) std::cerr << "no font found";
@@ -19,7 +19,8 @@ LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& game
 	
 	m_Panel = UI_Object({ 432, 432 }, {0, 0 }, sf::Color::Yellow);
 
-
+	m_leaderboardPanel = UI_Object({250, 300}, {0, 0}, sf::Color::White);
+	m_leaderboardText = UI_Text(24, { 135, 243 }, "", sf::Color::Black);
 
 	//Setup UI Lives
 	for (int i = 0; i < 3; i++) {
@@ -38,8 +39,10 @@ LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& game
 }
 
 void LevelLoader::handleInput(float dt) {
-	if (m_input.isPressed(sf::Keyboard::Scancode::Escape))
+	if (m_input.isPressed(sf::Keyboard::Scancode::Escape) && m_gameState.getCurrentState() != State::PAUSE) {
 		m_gameState.setCurrentState(State::PAUSE);
+		m_leaderboardText.setString(m_leaderboard.makeLeaderboard("data/Level1_Leaderboard.txt"));
+	}
 	if (m_gameState.getCurrentState() == State::PAUSE || m_gameState.getCurrentState() == State::GAMEOVER || m_gameState.getCurrentState() == State::WIN) {
 
 		sf::Vector2i pos = { m_input.getMouseX(), m_input.getMouseY() };
@@ -85,6 +88,7 @@ void LevelLoader::handleInput(float dt) {
 }
 
 void LevelLoader::update(float dt) {
+
 	if (m_gameState.getCurrentState() != State::PAUSE && m_gameState.getCurrentState() != State::GAMEOVER) {
 		m_isTimer = true;
 	}
@@ -92,10 +96,13 @@ void LevelLoader::update(float dt) {
 	if (m_isTimer) 
 	{ 
 		m_timer += dt;
-		m_timerText.setString("Time: " + formattedTime(m_timer));
+		m_timerText.setString("Time: " + m_leaderboard.formattedTime(m_timer));
 	}
 
-	if (m_player.getLives() <= 0)m_gameState.setCurrentState(State::GAMEOVER);
+	if (m_player.getLives() <= 0) { 
+		m_gameState.setCurrentState(State::GAMEOVER);
+		m_leaderboardText.setString(m_leaderboard.makeLeaderboard("data/Level1_Leaderboard.txt"));
+	}
 	// reset if fallen too far
 	if (m_player.getPosition().y > 1200)
 	{
@@ -141,7 +148,7 @@ void LevelLoader::update(float dt) {
 		}
 		for (auto& grimlin : m_grimlins) {
 			if (spanner.isAlive()) {
-				if (Collision::checkBoundingBox(spanner, grimlin)) {
+				if (grimlin.isAlive() && Collision::checkBoundingBox(spanner, grimlin)) {
 					spanner.setAlive(false);
 					grimlin.setAlive(false);
 					grimlin.setCollider(false);
@@ -159,6 +166,9 @@ void LevelLoader::update(float dt) {
 	m_Panel.setPosition({ view.x - 216, view.y - 216 });
 
 	m_maineText.setPosition({ 0, 180 });
+
+	m_leaderboardPanel.setPosition({ view.x - 200, view.y - 100 });
+	m_leaderboardText.setPosition({ m_leaderboardPanel.getPosition().x + 20, m_leaderboardPanel.getPosition().y + 20 });
 
 	m_resumeButton.setPosition({ view.x + 54, view.y + 108 });
 	m_resumeButtonLabel.setPosition({ m_resumeButton.getPosition().x + 10, m_resumeButton.getPosition().y + 10 });
@@ -190,6 +200,8 @@ void LevelLoader::update(float dt) {
 		m_isTimer = false;
 		m_leaderboard.addScore(m_timer);
 		m_leaderboard.saveToFile("data/Level1_Leaderboard.txt");
+
+		m_leaderboardText.setString(m_leaderboard.makeLeaderboard("data/Level1_Leaderboard.txt"));
 
 		m_gameState.setCurrentState(State::WIN);
 	}
@@ -227,6 +239,9 @@ void LevelLoader::drawUI() {
 	if (m_gameState.getCurrentState() == State::PAUSE || m_gameState.getCurrentState() == State::GAMEOVER || m_gameState.getCurrentState() == State::WIN) {
 		m_window.draw(m_Panel);
 
+		m_window.draw(m_leaderboardPanel);
+		m_window.draw(m_leaderboardText);
+
 		if (m_gameState.getCurrentState() == State::PAUSE) {
 			m_window.draw(m_resumeButton);
 			m_window.draw(m_resumeButtonLabel);
@@ -238,15 +253,6 @@ void LevelLoader::drawUI() {
 		m_window.draw(m_menuButton);
 		m_window.draw(m_menuButtonLabel);
 	}
-}
-
-std::string LevelLoader::formattedTime(float& time) {
-	int totalSeconds = (int)time;
-	int minutes = totalSeconds / 60 * 100;
-	int seconds = totalSeconds % 60;
-	int milliseconds = (int)((time - totalSeconds) * 100);
-	std::string text = std::to_string(minutes) + ":" + (seconds < 10 ? "0" : "") + std::to_string(seconds) + ":" + (milliseconds < 10 ? "0" : "") + std::to_string(milliseconds);
-	return text;
 }
 
 void LevelLoader::TileMapSetup(std::string tileMapData, sf::Vector2u mapDimensions, int tile_size, int num_columns, int num_rows, int sheet_spacing, std::string Texture) {

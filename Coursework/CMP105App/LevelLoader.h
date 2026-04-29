@@ -43,7 +43,7 @@ public:
 
     void setLevelState(State state) { m_stateLevel = state; };
 
-    std::string formattedTime(float& time);
+    
 
 private:
     //Timer and leaderboard
@@ -53,7 +53,8 @@ private:
     Leaderboard m_leaderboard;
 
     sf::Text m_timerText;
-    
+    sf::Text m_leaderboardText;
+    GameObject m_leaderboardPanel;
 
     sf::Font m_font;
     sf::Color m_defaultButtonColour = sf::Color::White ;
