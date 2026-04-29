@@ -80,7 +80,6 @@ void Menu::update(float dt)
 
 void Menu::onBegin()
 {
-	std::cout << "starting menu\n";
 	auto view = m_window.getDefaultView();
 	view.setCenter({ 216, 216 });
 	m_window.setView(view);
@@ -89,6 +88,6 @@ void Menu::onBegin()
 
 void Menu::onEnd()
 {
-	std::cout << "leaving menu\n";
+	
 	m_audio.stopAllMusic();
 }

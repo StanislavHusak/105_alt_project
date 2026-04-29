@@ -130,14 +130,12 @@ void LevelWithTiles::render()
 
 void LevelWithTiles::onBegin()
 {
-	std::cout << "Level one has been started\n";
 	m_audio.playMusicbyName("bgm1");
 	
 }
 
 void LevelWithTiles::onEnd()
 {
-	std::cout << "Level one has been left\n";
 	// reset player and level state
 	m_player.reset();
 	m_levelLoader.setFlagPuled(	false);
