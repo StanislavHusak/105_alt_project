@@ -165,7 +165,7 @@ void LevelLoader::update(float dt) {
 
 	m_Panel.setPosition({ view.x - 216, view.y - 216 });
 
-	m_maineText.setPosition({ 0, 180 });
+	m_maineText.setPosition({ 0, 200});
 
 	m_leaderboardPanel.setPosition({ view.x - 200, view.y - 100 });
 	m_leaderboardText.setPosition({ m_leaderboardPanel.getPosition().x + 20, m_leaderboardPanel.getPosition().y + 20 });
@@ -174,7 +174,7 @@ void LevelLoader::update(float dt) {
 	m_resumeButtonLabel.setPosition({ m_resumeButton.getPosition().x + 10, m_resumeButton.getPosition().y + 10 });
 
 	m_restartButton.setPosition({ view.x + 54, view.y });
-	m_restartButtonLabel.setPosition({ m_menuButton.getPosition().x + 20, m_menuButton.getPosition().y + 10 });
+	m_restartButtonLabel.setPosition({ m_restartButton.getPosition().x + 20, m_restartButton.getPosition().y + 10 });
 
 	m_menuButton.setPosition({ view.x + 54, view.y - 108 });
 	m_menuButtonLabel.setPosition({ m_menuButton.getPosition().x + 20, m_menuButton.getPosition().y + 10 });
@@ -238,6 +238,8 @@ void LevelLoader::drawUI() {
 
 	if (m_gameState.getCurrentState() == State::PAUSE || m_gameState.getCurrentState() == State::GAMEOVER || m_gameState.getCurrentState() == State::WIN) {
 		m_window.draw(m_Panel);
+
+		m_window.draw(m_maineText);
 
 		m_window.draw(m_leaderboardPanel);
 		m_window.draw(m_leaderboardText);
