@@ -51,7 +51,6 @@ std::string Leaderboard::makeLeaderboard(const std::string& filename) {
 		text += place + ". " + formattedTime(score) + "\n";
 		i++;
 	}
-	std::cerr << text;
 	return text;
 }
 
