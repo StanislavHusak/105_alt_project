@@ -33,6 +33,7 @@ LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& game
 
 	m_isSpannerActive = false;
 
+	m_TimerPanel = UI_Object({ 200, 50 }, { 0, 0 }, sf::Color::Black);
 	m_timerText = UI_Text(24, { 0, 0 }, "", sf::Color::White);
 	/////////////////////////////////////////////
 	
@@ -205,7 +206,8 @@ void LevelLoader::update(float dt) {
 	m_menuButton.setPosition({ view.x + 54, view.y - 108 });
 	m_menuButtonLabel.setPosition({ m_menuButton.getPosition().x + 20, m_menuButton.getPosition().y + 10 });
 
-	m_timerText.setPosition({ view.x + 50, view.y - 180 });
+	m_TimerPanel.setPosition({ view.x + 40, view.y + 150 });
+	m_timerText.setPosition({ m_TimerPanel.getPosition().x + 10, m_TimerPanel.getPosition().y+ 10});
 
 	for (int i = 0; i < 3; i++) {
 		m_lives[i].setPosition({ view.x - 200 + i * 60, view.y - 200 });
@@ -270,6 +272,7 @@ void LevelLoader::drawUI() {
 		m_window.draw(m_lives[i]);
 	}
 
+	m_window.draw(m_TimerPanel);
 	m_window.draw(m_timerText);
 
 	if (m_gameState.getCurrentState() == State::PAUSE || m_gameState.getCurrentState() == State::GAMEOVER || m_gameState.getCurrentState() == State::WIN) {
@@ -358,8 +361,6 @@ void LevelLoader::TileMapSetup(std::string tileMapData, sf::Vector2u mapDimensio
 	m_tilemap.setTileMap(tileMap, mapDimensions);
 	m_tilemap.setPosition({ 0, 100 });
 	m_tilemap.buildLevel();
-
-	std::cerr << m_tilemap.getLevel() << "\n";
 
 	tileSet.clear();
 }

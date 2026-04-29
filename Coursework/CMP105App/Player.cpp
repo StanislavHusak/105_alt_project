@@ -194,6 +194,8 @@ void Player::reset() {
 	m_restartPosition = { 0, 50 };
 	m_velocity = { 0,0 };
 	m_leverPulled = false;
+	m_canDoubleJump = false;
+	m_hasDoubleJumped = false;
 	m_gameEndTriggered = false;
 
 	m_lives = 3;

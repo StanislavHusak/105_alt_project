@@ -6,12 +6,15 @@ Spanner::Spanner() {
 	setCollisionBox({ {4, 4}, {24, 24} });
 	setCollider(true);
 	setFillColor(sf::Color::Green);
-	setPosition({ 100, 300 });
+	
 
 	
 	m_acce = { 0.f, GRAVITY };
 
 	m_isAllive = true;
+}
+Spanner::~Spanner() {
+
 }
 
 /// <summary>
@@ -29,7 +32,7 @@ void Spanner::update(float dt) {
 /// Determines direction (left/right) and applies an upward force.
 /// </summary>
 /// <param name="isRight">
-/// True = throw to the right ,
+/// True = throw to the right  
 /// False = throw to the left
 /// </param>
 void Spanner::Throwing(bool isRight) {

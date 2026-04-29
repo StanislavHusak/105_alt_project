@@ -35,7 +35,7 @@ LevelTwoWithTiles::LevelTwoWithTiles(sf::RenderWindow& window, Input& input, Gam
 	m_boopBlock.setPosition(boop_location);
 	m_boopBlock.setSize({ 72, 72 });
 
-	m_flag.setPosition({ 38 * 72, 4 * 72 });
+	m_flag.setPosition({ 38 * 72, 6 * 77 });
 	m_flag.setSize({ 72,72 });
 	m_flag.setTexture(&m_tileTexture);
 
@@ -74,6 +74,7 @@ void LevelTwoWithTiles::handleInput(float dt)
 		m_input.isPressed(sf::Keyboard::Scancode::F)))
 	{
 		m_player.setGameEndTriggered(true);
+		m_boopBlock.setAlive(false);
 	}
 }
 void LevelTwoWithTiles::update(float dt)

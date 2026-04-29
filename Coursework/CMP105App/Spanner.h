@@ -24,6 +24,6 @@ private:
 
 	float GRAVITY = 500.f;
 	float THROWINGFORCE = 200.f;
-	float HORRIZONTAL_SPEED = 1.f;
+	float HORRIZONTAL_SPEED = 3.f;
 };
 

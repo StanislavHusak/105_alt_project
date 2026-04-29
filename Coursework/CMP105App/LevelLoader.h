@@ -42,13 +42,27 @@ public:
 
     void updateCameraAndBackground(sf::Vector2i WORLD_SIZE, sf::Vector2i VIEW_SIZE);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="state"></param>
     void setLevelState(State state) { m_stateLevel = state; };
 
+    /// <summary>
+    /// Sets the file path used for storing and loading leaderboard data.
+    /// </summary>
+    /// <param name="filename"></param>
     void setLeaderboard(const std::string filename) { m_fileLeaderBoard = filename; };
 
-    bool getFlagpuled() {
-        return m_flagLeverPulled;
-    };
+    /// <summary>
+    /// Returns whether the level's lever (flag) has been pulled.
+    /// This is typically used to check if the player has activated the level objective.
+    /// </summary>
+    /// <returns>
+    /// True if the lever has been pulled, otherwise false
+    /// </returns>
+    bool getFlagpuled() {return m_flagLeverPulled;};
+   
     void setFlagPuled(bool is) { m_flagLeverPulled = is; };
 private:
     //Timer and leaderboard//
@@ -58,6 +72,8 @@ private:
     Leaderboard m_leaderboard;
 
     sf::Text m_timerText;
+    GameObject m_TimerPanel;
+
     sf::Text m_leaderboardText;
     GameObject m_leaderboardPanel;
     std::string m_fileLeaderBoard;
