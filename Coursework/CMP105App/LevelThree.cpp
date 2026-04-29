@@ -4,8 +4,7 @@
 LevelThree::LevelThree(sf::RenderWindow& window, Input& input, GameState& gameState, AudioManager& audio)
     : Scene(window, input, gameState, audio),
     m_levelLoader(window, input, gameState, audio, m_player),
-    m_alertText(m_font),
-    m_player(m_levelLoader.getPlayer())
+    m_alertText(m_font)
 {
     m_levelLoader.setLevelState(State::LEVELTREE);
     m_levelLoader.setLeaderboard("data/Level3_leaderboard.txt");

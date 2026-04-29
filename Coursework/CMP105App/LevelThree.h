@@ -18,7 +18,7 @@ public:
 
 private:
     LevelLoader m_levelLoader;
-    Player& m_player;
+    Player m_player;
 
     sf::Font m_font;
     sf::Text m_alertText;

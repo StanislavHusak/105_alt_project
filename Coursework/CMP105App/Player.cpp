@@ -35,12 +35,16 @@ void Player::handleInput(float dt)
 {
 	m_accel = { 0,0 };
 
-	if (m_input->isKeyDown(sf::Keyboard::Scancode::A))
+	if (m_input->isKeyDown(sf::Keyboard::Scancode::A)) {
 		m_accel.x -= SPEED;
+		m_isFliped = false;
+	}
+
 		
-	if (m_input->isKeyDown(sf::Keyboard::Scancode::D))
+	if (m_input->isKeyDown(sf::Keyboard::Scancode::D)) {
 		m_accel.x += SPEED;
-		
+		m_isFliped = true;
+	}
 	if (m_input->isPressed(sf::Keyboard::Scancode::Space) && m_isGrounded)
 	{
 		m_velocity.y = - JUMP_FORCE;

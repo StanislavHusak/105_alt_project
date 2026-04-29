@@ -42,8 +42,12 @@ public:
 
     void setLevelState(State state) { m_stateLevel = state; };
 
-    void setLeaderboard(std::string filename) { m_fileLeaderBoard = filename; };
+    void setLeaderboard(const std::string filename) { m_fileLeaderBoard = filename; };
 
+    bool getFlagpuled() {
+        return m_flagLeverPulled;
+    };
+    void setFlagPuled(bool is) { m_flagLeverPulled = is; };
 private:
     //Timer and leaderboard
     float m_timer = 0.f;
@@ -96,5 +100,7 @@ private:
     std::vector<Gremlin> m_grimlins;
 
     std::vector<Checkpoints> m_Checkpoints;
+
+    bool m_flagLeverPulled = false;
 };
 

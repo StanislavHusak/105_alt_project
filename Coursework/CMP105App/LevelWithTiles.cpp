@@ -11,7 +11,7 @@ LevelWithTiles::LevelWithTiles(sf::RenderWindow& window, Input& input, GameState
 	m_levelLoader.TileMapSetup( "data/Tilemap.txt", {40, 8}, 18, 20, 9, 1, "gfx/tilemap.png");
 	m_levelLoader.BgTileMapSetup("data/TilemapBackground.txt", { 14, 3 }, 24, 8, 3, 1, "gfx/tilemap-backgrounds.png");
 
-	m_levelLoader.SetupGremlins("data/GremlinsPosition.txt");
+	
 
 	// setup player 
 	m_player.setInput(&m_input);
@@ -58,7 +58,7 @@ void LevelWithTiles::update(float dt)
 
 	m_levelLoader.update(dt);
 
-	if (m_flagLeverPulled)
+	if (m_levelLoader.getFlagpuled())
 	{
 		for (auto& flag : m_flags) flag->update(dt);
 	}
@@ -81,7 +81,7 @@ void LevelWithTiles::update(float dt)
 		m_alertText.setCharacterSize(24);
 		m_alertText.setPosition(m_window.getView().getCenter() + sf::Vector2f(-100.f, -150.f));
 		m_promptTimer = PROMPT_TIME;
-		if (!m_flagLeverPulled)
+		if (!m_levelLoader.getFlagpuled())
 			m_alertText.setString("Press F to fix\nthe wind");
 		else
 			m_alertText.setString("Better check\nthose flags");
@@ -91,14 +91,14 @@ void LevelWithTiles::update(float dt)
 		m_alertText.setCharacterSize(24);
 		m_alertText.setPosition(m_window.getView().getCenter() + sf::Vector2f(-100.f, -150.f));
 		m_promptTimer = PROMPT_TIME;
-		if (m_flagLeverPulled)
+		if (m_levelLoader.getFlagpuled())
 			m_alertText.setString("Good job! Press\nF to end the day");
 	}
 
 	if (m_player.getLeverPulled())
 	{
-		if (!m_flagLeverPulled) m_promptTimer = 0;
-		m_flagLeverPulled = true;
+		if (!m_levelLoader.getFlagpuled()) m_promptTimer = 0;
+		 m_levelLoader.setFlagPuled( true);
 		m_lever.setUsed(true);
 	}
 	else 
@@ -140,7 +140,7 @@ void LevelWithTiles::onEnd()
 	std::cout << "Level one has been left\n";
 	// reset player and level state
 	m_player.reset();
-	m_flagLeverPulled = false;
+	m_levelLoader.setFlagPuled(	false);
 	// reset alert text
 	m_alertText.setString("Who keeps turning\nthe wind off?");
 	m_alertText.setPosition({ 50, 150 });

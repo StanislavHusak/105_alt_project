@@ -29,15 +29,13 @@ LevelLoader::LevelLoader(sf::RenderWindow& window, Input& input, GameState& game
 		m_lives.push_back(live);
 	}
 
-	Checkpoints checkpoint;
-	checkpoint.setPosition({ 450, 250 });
-	m_Checkpoints.push_back(checkpoint);
-
 	m_isSpannerActive = false;
 
 	m_timerText = UI_Text(24, { 0, 0 }, "", sf::Color::White);
 
 	if (!m_tileTexture.loadFromFile("gfx/tilemap.png")) std::cerr << "failed to find tile images";
+
+	
 }
 
 void LevelLoader::handleInput(float dt) {
@@ -159,8 +157,8 @@ void LevelLoader::update(float dt) {
 		}
 		for (auto& grimlin : m_grimlins) {
 			
-			if (Collision::checkBoundingBox(grimlin, m_player)) {
-				//m_player.restart();
+			if (grimlin.isAlive() && Collision::checkBoundingBox(grimlin, m_player)) {
+				m_player.restart();
 			}
 		}
 	}
@@ -199,8 +197,8 @@ void LevelLoader::update(float dt) {
 		}
 	}
 
-	for (int i = 0; i < m_Checkpoints.size();i++) {
-		m_Checkpoints[i].update(m_player);
+	for (auto& chekpoint: m_Checkpoints) {
+		chekpoint.update(m_player);
 	}
 
 	if (m_player.getGameEndTriggered()) {
@@ -220,8 +218,8 @@ void LevelLoader::render() {
 	m_tilemap.render(m_window);
 
 
-	for (int i = 0; i < m_Checkpoints.size();i++) {
-		m_window.draw(m_Checkpoints[i]);
+	for (auto& checkpoint: m_Checkpoints) {
+		m_window.draw(checkpoint);
 	}
 	for (auto& spanner: m_spanners) {
 		if (spanner.isAlive()) {
@@ -391,6 +389,17 @@ void LevelLoader::SetupGremlins(std::string filename) {
 	};
 	data.close();
 }
+void LevelLoader::SetUpCheckPoints(std::string filename) {
+	std::ifstream data(filename);
+	if (!data.is_open())std::cerr << "file no find\n";
+	float x, y;
+	while (data >> x >> y) {
+		Checkpoints checkpoint;
+		checkpoint.setPosition({ x, y });
+		m_Checkpoints.push_back(checkpoint);
+	}
+
+}
 
 GameObject LevelLoader::UI_Object(sf::Vector2f size, sf::Vector2f position, sf::Color color) {
 	GameObject UI_OBJECT;
@@ -410,16 +419,7 @@ sf::Text LevelLoader::UI_Text(int characterSize, sf::Vector2f position, std::str
 	return UI_TEXT;
 }
 
-void LevelLoader::SetUpCheckPoints(std::string filename) {
-	std::ifstream data;
-	Checkpoints checkpoint;
-	float x, y;
-	while (data >> x >> y) {
-		checkpoint.setPosition({ x, y });
-		m_Checkpoints.push_back(checkpoint);
-	}
 
-}
 
 void LevelLoader::updateCameraAndBackground(sf::Vector2i WORLD_SIZE, sf::Vector2i VIEW_SIZE)
 {
@@ -439,7 +439,7 @@ void LevelLoader::updateCameraAndBackground(sf::Vector2i WORLD_SIZE, sf::Vector2
 }
 
 void LevelLoader::reset() {
-	m_player.reset();
+	m_flagLeverPulled = false;
 
 	for (auto& grimlin : m_grimlins) {
 		grimlin.setAlive(true);
@@ -455,4 +455,6 @@ void LevelLoader::reset() {
 	for (auto& checkpoint : m_Checkpoints) {
 		checkpoint.setIsActive(false);
 	}
+
+	m_player.reset();
 }

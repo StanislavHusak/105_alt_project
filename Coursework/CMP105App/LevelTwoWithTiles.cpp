@@ -9,6 +9,8 @@ LevelTwoWithTiles::LevelTwoWithTiles(sf::RenderWindow& window, Input& input, Gam
 	m_levelLoader.TileMapSetup("data/TilemapLevel2.txt", {40, 8}, 18, 20, 9, 1,"gfx/tilemap.png");
 	m_levelLoader.BgTileMapSetup("data/TilemapBackgroundLevel2.txt", {14, 5}, 24, 8, 3, 1,"gfx/tilemap-backgrounds.png");
 	
+	m_levelLoader.SetupGremlins("data/GremlinsPosition.txt");
+	m_levelLoader.SetUpCheckPoints("data/Level2_CheckpointsPosition.txt");
 
 	// setup player 
 	m_player.setInput(&m_input);
